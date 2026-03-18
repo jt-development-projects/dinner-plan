@@ -97,10 +97,15 @@ document.getElementById("form-login").addEventListener("submit", async e => {
   const errEl    = document.getElementById("login-error");
   errEl.classList.add("hidden");
 
-  const { error } = await sb.auth.signInWithPassword({ email, password });
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
   if (error) {
     errEl.textContent = error.message;
     errEl.classList.remove("hidden");
+  } else {
+    currentUser = data.user;
+    document.getElementById("nav-user-name").textContent =
+      data.user.user_metadata?.display_name || data.user.email;
+    await loadUserGroup();
   }
 });
 
