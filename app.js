@@ -202,19 +202,19 @@ document.getElementById("form-create-group").addEventListener("submit", async e 
   errEl.classList.add("hidden");
 
   try {
-    const { data: group, error: groupErr } = await sb
+    const groupId = crypto.randomUUID();
+
+    const { error: groupErr } = await sb
       .from("groups")
-      .insert({ name, created_by: currentUser.id })
-      .select()
-      .single();
+      .insert({ id: groupId, name, created_by: currentUser.id });
     if (groupErr) throw groupErr;
 
     const { error: memberErr } = await sb
       .from("group_members")
-      .insert({ group_id: group.id, user_id: currentUser.id, role: "owner" });
+      .insert({ group_id: groupId, user_id: currentUser.id, role: "owner" });
     if (memberErr) throw memberErr;
 
-    currentGroupId = group.id;
+    currentGroupId = groupId;
     loadPlan();
     await renderHome(true);
   } catch (err) {
