@@ -37,7 +37,7 @@ function savePlan() {
 
 // ─── View Router ──────────────────────────────────────────────────────────────
 
-const AUTH_VIEWS = ["auth-login", "auth-register", "auth-forgot", "auth-reset", "group-setup"];
+const AUTH_VIEWS = ["auth-login", "auth-register", "auth-forgot", "auth-reset"];
 const APP_VIEWS  = ["home", "add", "detail"];
 const ALL_VIEWS  = [...AUTH_VIEWS, ...APP_VIEWS];
 
@@ -193,68 +193,41 @@ document.getElementById("btn-signout").addEventListener("click", async () => {
   showView("auth-login");
 });
 
-// ─── Group setup ──────────────────────────────────────────────────────────────
+// ─── Group auto-create / invite join ─────────────────────────────────────────
 
-document.getElementById("form-create-group").addEventListener("submit", async e => {
-  e.preventDefault();
-  const name  = document.getElementById("group-name").value.trim();
-  const errEl = document.getElementById("create-group-error");
-  errEl.classList.add("hidden");
+async function createPersonalGroup() {
+  const groupId = crypto.randomUUID();
+  const { error: gErr } = await sb
+    .from("groups")
+    .insert({ id: groupId, name: "My Household", created_by: currentUser.id });
+  if (gErr) throw gErr;
+  const { error: mErr } = await sb
+    .from("group_members")
+    .insert({ group_id: groupId, user_id: currentUser.id, role: "owner" });
+  if (mErr) throw mErr;
+  currentGroupId = groupId;
+}
 
-  try {
-    const groupId = crypto.randomUUID();
+async function joinViaToken(token) {
+  let t = token;
+  try { t = new URL(token).searchParams.get("invite") || token; } catch {}
 
-    const { error: groupErr } = await sb
-      .from("groups")
-      .insert({ id: groupId, name, created_by: currentUser.id });
-    if (groupErr) throw groupErr;
+  const { data: invite } = await sb
+    .from("invite_tokens")
+    .select("group_id, expires_at")
+    .eq("token", t)
+    .single();
 
-    const { error: memberErr } = await sb
-      .from("group_members")
-      .insert({ group_id: groupId, user_id: currentUser.id, role: "owner" });
-    if (memberErr) throw memberErr;
-
-    currentGroupId = groupId;
-    loadPlan();
-    await renderHome(true);
-  } catch (err) {
-    errEl.textContent = err.message;
-    errEl.classList.remove("hidden");
+  if (!invite || new Date(invite.expires_at) < new Date()) {
+    await createPersonalGroup();
+    return;
   }
-});
-
-document.getElementById("form-join-group").addEventListener("submit", async e => {
-  e.preventDefault();
-  const input = document.getElementById("invite-code").value.trim();
-  const errEl = document.getElementById("join-group-error");
-  errEl.classList.add("hidden");
-
-  let token = input;
-  try { token = new URL(input).searchParams.get("invite") || input; } catch {}
-
-  try {
-    const { data: invite, error: tokenErr } = await sb
-      .from("invite_tokens")
-      .select("group_id, expires_at")
-      .eq("token", token)
-      .single();
-
-    if (tokenErr || !invite) throw new Error("Invalid invite link.");
-    if (new Date(invite.expires_at) < new Date()) throw new Error("This invite has expired.");
-
-    const { error: memberErr } = await sb
-      .from("group_members")
-      .insert({ group_id: invite.group_id, user_id: currentUser.id, role: "member" });
-    if (memberErr) throw memberErr;
-
-    currentGroupId = invite.group_id;
-    loadPlan();
-    await renderHome(true);
-  } catch (err) {
-    errEl.textContent = err.message;
-    errEl.classList.remove("hidden");
-  }
-});
+  const { error } = await sb
+    .from("group_members")
+    .insert({ group_id: invite.group_id, user_id: currentUser.id, role: "member" });
+  if (error) throw error;
+  currentGroupId = invite.group_id;
+}
 
 // ─── Invite ───────────────────────────────────────────────────────────────────
 
@@ -738,21 +711,26 @@ async function loadUserGroup() {
 
   if (data) {
     currentGroupId = data.group_id;
-    pendingInviteToken = null;
-    loadPlan();
-    await renderHome(true);
   } else {
-    if (pendingInviteToken) {
-      document.getElementById("invite-code").value =
-        `${window.location.origin}?invite=${pendingInviteToken}`;
+    // New user — join via stored invite or auto-create a personal group
+    const storedInvite = localStorage.getItem("pendingInvite");
+    if (storedInvite) {
+      localStorage.removeItem("pendingInvite");
+      await joinViaToken(storedInvite);
+    } else {
+      await createPersonalGroup();
     }
-    showView("group-setup");
   }
+
+  pendingInviteToken = null;
+  loadPlan();
+  await renderHome(true);
 }
 
 async function initApp() {
   const urlParams = new URLSearchParams(window.location.search);
   pendingInviteToken = urlParams.get("invite");
+  if (pendingInviteToken) localStorage.setItem("pendingInvite", pendingInviteToken);
 
   const config = await fetch("/api/config").then(r => r.json());
   sb = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);

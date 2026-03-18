@@ -11,7 +11,7 @@
   <nav id="main-nav" class="hidden">
     <a href="#" class="logo" id="nav-home"><img src="logo_header.svg" alt="Dinner Plan"></a>
     <div class="nav-right">
-      <button id="btn-invite" class="btn-nav">+ Invite</button>
+      <button id="btn-invite" class="btn-nav">Share with family</button>
       <span id="nav-user-name" class="nav-user"></span>
       <button id="btn-signout" class="btn-nav">Sign out</button>
     </div>
@@ -109,38 +109,6 @@
     </div>
   </div>
 
-  <!-- GROUP SETUP -->
-  <div id="view-group-setup" class="view auth-view hidden">
-    <div class="auth-box auth-box-wide">
-      <div class="auth-logo">Dinner Plan</div>
-      <h2>Set up your household</h2>
-      <div class="group-options">
-        <div class="group-option">
-          <h3>Create a new group</h3>
-          <form id="form-create-group">
-            <div class="field">
-              <label>Group name</label>
-              <input type="text" id="group-name" placeholder="e.g. The Hansen Family" required>
-            </div>
-            <p class="auth-error hidden" id="create-group-error"></p>
-            <button type="submit" class="btn-primary btn-full">Create group</button>
-          </form>
-        </div>
-        <div class="group-divider">or</div>
-        <div class="group-option">
-          <h3>Join an existing group</h3>
-          <form id="form-join-group">
-            <div class="field">
-              <label>Invite link or code</label>
-              <input type="text" id="invite-code" placeholder="Paste invite link here">
-            </div>
-            <p class="auth-error hidden" id="join-group-error"></p>
-            <button type="submit" class="btn-primary btn-full">Join group</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- HOME VIEW -->
   <div id="view-home" class="view hidden">
