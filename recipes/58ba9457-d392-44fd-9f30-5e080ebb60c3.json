@@ -1,0 +1,73 @@
+{
+  "id": "58ba9457-d392-44fd-9f30-5e080ebb60c3",
+  "name": "Okonomiyaki",
+  "serves": 4,
+  "ingredients": [
+    {
+      "name": "hvedemel",
+      "amount": 200,
+      "unit": "g"
+    },
+    {
+      "name": "gr\u00f8ntsagsbuillon",
+      "amount": 4,
+      "unit": "dl"
+    },
+    {
+      "name": "l\u00f8g, finthakket",
+      "amount": 1,
+      "unit": "pcs"
+    },
+    {
+      "name": "fed hvidl\u00f8g, finthakkede",
+      "amount": 2,
+      "unit": "pcs"
+    },
+    {
+      "name": "\u00e6g",
+      "amount": 4,
+      "unit": "pcs"
+    },
+    {
+      "name": "spidsk\u00e5l, finthakket",
+      "amount": 400,
+      "unit": "g"
+    },
+    {
+      "name": "Worcestershire sauce",
+      "amount": 3,
+      "unit": "tbsp"
+    },
+    {
+      "name": "ketchup",
+      "amount": 2,
+      "unit": "tbsp"
+    },
+    {
+      "name": "\u00f8sters sauce",
+      "amount": 1,
+      "unit": "tbsp"
+    },
+    {
+      "name": "soya sauce",
+      "amount": 1,
+      "unit": "tsp"
+    },
+    {
+      "name": "sukker",
+      "amount": 1,
+      "unit": "tsp"
+    },
+    {
+      "name": "Mayonnaise",
+      "amount": null,
+      "unit": ""
+    }
+  ],
+  "steps": [
+    "R\u00f8r mel og gr\u00f8ntsagsbuillon sammen til en tyk dej og lad den hvile i en skal i 10 minutter.",
+    "Sauter imens l\u00f8g og hvidl\u00f8g gyldne og bl\u00f8de p\u00e5 en pande med lidt olie. Smag til med salt og sort peber. R\u00f8r l\u00f8g, \u00e6g og spidsk\u00e5l i sk\u00e5len med dej.",
+    "Varm panden godt op med lidt olie. Kom skefulde af dej p\u00e5 panden til sm\u00e5 pandekager og steg dem, til de er gyldne og spr\u00f8de p\u00e5 hver side.",
+    "R\u00f8r Worcestershire, ketchup, \u00f8sters sauce, soya sauce og sukker sammen til okonomiyaki sauce"
+  ]
+}

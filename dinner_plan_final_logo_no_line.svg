@@ -1,0 +1,13 @@
+<svg width="100%" viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- FULL SIZE -->
+  <text x="340" y="60" font-family="var(--font-sans)" font-size="10" letter-spacing="3" text-anchor="middle" fill="var(--color-text-tertiary)" style="fill:rgb(156, 154, 146);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, sans-serif;font-size:10px;font-weight:400;text-anchor:middle;dominant-baseline:auto">FULL SIZE</text>
+
+  <text x="340" y="120" text-anchor="middle" font-family="var(--font-serif)" font-size="44" font-weight="400" letter-spacing="18" fill="var(--color-text-primary)" style="fill:rgb(250, 249, 245);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Serif&quot;, Georgia, &quot;Times New Roman&quot;, serif;font-size:44px;font-weight:400;text-anchor:middle;dominant-baseline:auto">DINNER PLAN</text>
+
+  <!-- HEADER SIZE -->
+  <text x="340" y="160" font-family="var(--font-sans)" font-size="10" letter-spacing="3" text-anchor="middle" fill="var(--color-text-tertiary)" style="fill:rgb(156, 154, 146);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, sans-serif;font-size:10px;font-weight:400;text-anchor:middle;dominant-baseline:auto">HEADER SIZE</text>
+
+  <text x="340" y="198" text-anchor="middle" font-family="var(--font-serif)" font-size="18" font-weight="400" letter-spacing="7" fill="var(--color-text-primary)" style="fill:rgb(250, 249, 245);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Serif&quot;, Georgia, &quot;Times New Roman&quot;, serif;font-size:18px;font-weight:400;text-anchor:middle;dominant-baseline:auto">DINNER PLAN</text>
+
+</svg>

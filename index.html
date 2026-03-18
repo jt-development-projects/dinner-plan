@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dinner Plan</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="logo" id="nav-home"><img src="logo_header.svg" alt="Dinner Plan"></a>
+  </nav>
+
+  <!-- HOME VIEW -->
+  <div id="view-home" class="view">
+    <div class="home-columns">
+      <div class="home-left">
+        <div class="home-left-header">
+          <h1>My Recipes</h1>
+          <div class="home-left-actions">
+            <button id="btn-export-all" class="btn-secondary">Export All</button>
+            <button id="nav-add" class="btn-primary">+ Add Recipe</button>
+          </div>
+        </div>
+        <p class="hint">Check recipes to add them to your shopping list.</p>
+        <div id="recipe-list" class="recipe-grid"></div>
+        <p id="no-recipes" class="empty-state">No recipes yet. Add your first one!</p>
+      </div>
+      <div class="home-right">
+        <div class="shopping-panel">
+          <div class="shopping-panel-header">
+            <h2>Shopping List</h2>
+            <div class="shopping-actions">
+              <button id="btn-copy-shopping" class="btn-secondary">Copy</button>
+              <button id="btn-print-shopping" class="btn-secondary">Print</button>
+            </div>
+          </div>
+          <div class="shopping-meta">
+            <p id="shopping-summary"></p>
+            <label>People: <input type="number" id="home-people" value="4" min="1" max="50"></label>
+          </div>
+          <ul id="shopping-items"></ul>
+          <p id="no-shopping" class="empty-state">Check recipes to build your list.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD RECIPE VIEW -->
+  <div id="view-add" class="view hidden">
+    <h1 id="form-title">Add Recipe</h1>
+
+    <div class="image-upload-area" id="image-upload-area">
+      <input type="file" id="image-input" accept="image/*" hidden>
+      <div class="image-upload-inner" id="image-upload-trigger">
+        <span class="upload-icon">📷</span>
+        <span class="upload-label">Upload a photo to fill in automatically</span>
+        <span class="upload-sub">JPG, PNG, screenshot — any recipe image</span>
+      </div>
+      <div class="image-loading hidden" id="image-loading">
+        <span class="spinner"></span> Reading recipe…
+      </div>
+    </div>
+
+    <form id="recipe-form">
+      <input type="hidden" id="edit-id">
+      <div class="field">
+        <label>Recipe Name</label>
+        <input type="text" id="field-name" placeholder="e.g. Beef Wellington" required>
+      </div>
+      <div class="field">
+        <label>Serves</label>
+        <input type="number" id="field-serves" value="4" min="1" required>
+      </div>
+
+      <div class="section-label">Ingredients</div>
+      <div id="ingredients-list"></div>
+      <button type="button" id="btn-add-ingredient" class="btn-secondary">+ Add Ingredient</button>
+
+      <div class="section-label">Steps</div>
+      <div id="steps-list"></div>
+      <button type="button" id="btn-add-step" class="btn-secondary">+ Add Step</button>
+
+      <div class="form-actions">
+        <button type="button" id="btn-cancel" class="btn-secondary">Cancel</button>
+        <button type="submit" class="btn-primary">Save Recipe</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- RECIPE DETAIL VIEW -->
+  <div id="view-detail" class="view hidden">
+    <button class="back-btn" id="btn-back-detail">← Back</button>
+    <div class="detail-header">
+      <h1 id="detail-name"></h1>
+      <div class="detail-actions">
+        <button id="btn-export-recipe" class="btn-secondary">Export</button>
+        <button id="btn-print-recipe" class="btn-secondary">Print</button>
+        <button id="btn-edit-recipe" class="btn-secondary">Edit</button>
+        <button id="btn-delete-recipe" class="btn-danger">Delete</button>
+      </div>
+    </div>
+    <div class="detail-scale">
+      <label>Scale for: <input type="number" id="detail-people" value="4" min="1" max="50"></label>
+      <span id="detail-serves-note"></span>
+    </div>
+    <div class="detail-columns">
+      <div class="detail-col">
+        <h2>Ingredients</h2>
+        <ul id="detail-ingredients"></ul>
+      </div>
+      <div class="detail-col">
+        <h2>Steps</h2>
+        <ol id="detail-steps"></ol>
+      </div>
+    </div>
+  </div>
+
+<script src="app.js"></script>
+</body>
+</html>
