@@ -8,12 +8,142 @@
 </head>
 <body>
 
-  <nav>
+  <nav id="main-nav" class="hidden">
     <a href="#" class="logo" id="nav-home"><img src="logo_header.svg" alt="Dinner Plan"></a>
+    <div class="nav-right">
+      <button id="btn-invite" class="btn-nav">+ Invite</button>
+      <span id="nav-user-name" class="nav-user"></span>
+      <button id="btn-signout" class="btn-nav">Sign out</button>
+    </div>
   </nav>
 
+  <!-- AUTH: LOGIN -->
+  <div id="view-auth-login" class="view auth-view">
+    <div class="auth-box">
+      <div class="auth-logo">Dinner Plan</div>
+      <h2>Sign in</h2>
+      <form id="form-login">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="login-email" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="login-password" required autocomplete="current-password">
+        </div>
+        <p class="auth-error hidden" id="login-error"></p>
+        <button type="submit" class="btn-primary btn-full">Sign in</button>
+      </form>
+      <div class="auth-links">
+        <a href="#" id="link-to-register">Create an account</a>
+        <a href="#" id="link-to-forgot">Forgot password?</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTH: REGISTER -->
+  <div id="view-auth-register" class="view auth-view hidden">
+    <div class="auth-box">
+      <div class="auth-logo">Dinner Plan</div>
+      <h2>Create account</h2>
+      <form id="form-register">
+        <div class="field">
+          <label>Your name</label>
+          <input type="text" id="register-name" required autocomplete="name">
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="register-email" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="register-password" required autocomplete="new-password" minlength="8">
+        </div>
+        <p class="auth-error hidden" id="register-error"></p>
+        <button type="submit" class="btn-primary btn-full">Create account</button>
+      </form>
+      <p class="auth-message hidden" id="register-message"></p>
+      <div class="auth-links">
+        <a href="#" id="link-to-login-from-register">Back to sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTH: FORGOT PASSWORD -->
+  <div id="view-auth-forgot" class="view auth-view hidden">
+    <div class="auth-box">
+      <div class="auth-logo">Dinner Plan</div>
+      <h2>Reset password</h2>
+      <form id="form-forgot">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="forgot-email" required autocomplete="email">
+        </div>
+        <p class="auth-error hidden" id="forgot-error"></p>
+        <button type="submit" class="btn-primary btn-full">Send reset link</button>
+      </form>
+      <p class="auth-message hidden" id="forgot-message"></p>
+      <div class="auth-links">
+        <a href="#" id="link-to-login-from-forgot">Back to sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTH: RESET PASSWORD -->
+  <div id="view-auth-reset" class="view auth-view hidden">
+    <div class="auth-box">
+      <div class="auth-logo">Dinner Plan</div>
+      <h2>Set new password</h2>
+      <form id="form-reset">
+        <div class="field">
+          <label>New password</label>
+          <input type="password" id="reset-password" required minlength="8">
+        </div>
+        <div class="field">
+          <label>Confirm password</label>
+          <input type="password" id="reset-confirm" required minlength="8">
+        </div>
+        <p class="auth-error hidden" id="reset-error"></p>
+        <button type="submit" class="btn-primary btn-full">Set new password</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- GROUP SETUP -->
+  <div id="view-group-setup" class="view auth-view hidden">
+    <div class="auth-box auth-box-wide">
+      <div class="auth-logo">Dinner Plan</div>
+      <h2>Set up your household</h2>
+      <div class="group-options">
+        <div class="group-option">
+          <h3>Create a new group</h3>
+          <form id="form-create-group">
+            <div class="field">
+              <label>Group name</label>
+              <input type="text" id="group-name" placeholder="e.g. The Hansen Family" required>
+            </div>
+            <p class="auth-error hidden" id="create-group-error"></p>
+            <button type="submit" class="btn-primary btn-full">Create group</button>
+          </form>
+        </div>
+        <div class="group-divider">or</div>
+        <div class="group-option">
+          <h3>Join an existing group</h3>
+          <form id="form-join-group">
+            <div class="field">
+              <label>Invite link or code</label>
+              <input type="text" id="invite-code" placeholder="Paste invite link here">
+            </div>
+            <p class="auth-error hidden" id="join-group-error"></p>
+            <button type="submit" class="btn-primary btn-full">Join group</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- HOME VIEW -->
-  <div id="view-home" class="view">
+  <div id="view-home" class="view hidden">
     <div class="home-columns">
       <div class="home-left">
         <div class="home-left-header">
@@ -117,6 +247,7 @@
     </div>
   </div>
 
-<script src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
 </body>
 </html>
