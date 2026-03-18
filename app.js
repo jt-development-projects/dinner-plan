@@ -241,12 +241,16 @@ document.getElementById("btn-invite").addEventListener("click", async () => {
     if (error) throw error;
 
     const url = `${window.location.origin}?invite=${invite.token}`;
-    await navigator.clipboard.writeText(url);
-
     const btn = document.getElementById("btn-invite");
-    const orig = btn.textContent;
-    btn.textContent = "Link copied!";
-    setTimeout(() => btn.textContent = orig, 2000);
+
+    try {
+      await navigator.clipboard.writeText(url);
+      const orig = btn.textContent;
+      btn.textContent = "Link copied!";
+      setTimeout(() => btn.textContent = orig, 2000);
+    } catch {
+      prompt("Copy this invite link and share it:", url);
+    }
   } catch (err) {
     alert("Could not generate invite link: " + err.message);
   }
