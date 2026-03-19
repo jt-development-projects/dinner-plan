@@ -105,7 +105,7 @@ const UNIT_LABELS = {
   da: { "": "—", g: "g", kg: "kg", ml: "ml", dl: "dl", l: "l", tsp: "tsk", tbsp: "spsk", cup: "kop", pcs: "stk", pinch: "knivspids", slices: "skiver", bunch: "bundt" },
   en: { "": "—", g: "g", kg: "kg", ml: "ml", dl: "dl", l: "l", tsp: "tsp", tbsp: "tbsp", cup: "cup", pcs: "pcs", pinch: "pinch", slices: "slices", bunch: "bunch" },
 };
-function unitLabel(u) { return UNIT_LABELS[LANG][u] ?? u || "—"; }
+function unitLabel(u) { return UNIT_LABELS[LANG][u] ?? (u || "—"); }
 
 const PANTRY_STAPLES = /^(salt|peber|pepper|salt\s*(og|and|&)\s*(peber|pepper).*|.*friskkværnet\s*peber|freshly?\s*ground\s*pepper)$/i;
 function isPantryStaple(name) { return PANTRY_STAPLES.test(name.trim()); }
