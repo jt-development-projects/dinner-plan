@@ -494,7 +494,7 @@ async function handleImageFiles(files, inputEl) {
 
   let saved = 0, failed = 0;
   for (let i = 0; i < files.length; i++) {
-    loadingText.textContent = `Saving recipe ${i + 1} of ${files.length}…`;
+    loadingText.textContent = `Reading recipe ${i + 1} of ${files.length}…`;
     try {
       const base64 = await compressImage(files[i]);
       const res    = await fetch("/api/parse-image", {
@@ -504,6 +504,8 @@ async function handleImageFiles(files, inputEl) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Unknown error");
+      loadingText.textContent = `Saving recipe ${i + 1} of ${files.length}…`;
+      data.ingredients = await normaliseIngredients(data.ingredients || []);
       await apiSave(data);
       saved++;
     } catch {
@@ -617,13 +619,23 @@ document.getElementById("recipe-form").addEventListener("submit", async e => {
     return;
   }
 
-  const recipe = { name, serves, ingredients, steps };
+  const saveBtn = e.target.querySelector("button[type='submit']");
+  saveBtn.textContent = "Normalising…";
+  saveBtn.disabled = true;
+
+  const normalisedIngredients = await normaliseIngredients(ingredients);
+
+  saveBtn.textContent = "Saving…";
+
+  const recipe = { name, serves, ingredients: normalisedIngredients, steps };
   if (editId) recipe.id = editId;
 
   try {
     await apiSave(recipe);
   } catch (err) {
     showError("Could not save recipe.");
+    saveBtn.textContent = "Save Recipe";
+    saveBtn.disabled = false;
     return;
   }
 
@@ -868,6 +880,25 @@ function applyLockState() {
     cb.disabled = shoppingLocked;
   });
   people.disabled = shoppingLocked;
+}
+
+// ─── Ingredient normalisation ─────────────────────────────────────────────────
+
+async function normaliseIngredients(ingredients) {
+  const existingNames = [...new Set(recipes.flatMap(r => r.ingredients.map(i => i.name)))];
+  const newNames      = [...new Set(ingredients.map(i => i.name))];
+  if (!existingNames.length) return ingredients;
+  try {
+    const res = await fetch("/api/normalise-ingredients", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ newNames, existingNames }),
+    });
+    const { mapping } = await res.json();
+    return ingredients.map(ing => ({ ...ing, name: mapping[ing.name] ?? ing.name }));
+  } catch {
+    return ingredients;
+  }
 }
 
 // ─── Export ───────────────────────────────────────────────────────────────────
