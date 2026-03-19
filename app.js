@@ -4,7 +4,7 @@ const UNITS = ["", "g", "kg", "ml", "dl", "l", "tsp", "tbsp", "cup", "pcs", "pin
 
 // ─── Internationalisation ──────────────────────────────────────────────────
 
-const LANG = navigator.language?.startsWith("da") ? "da" : "en";
+const LANG = (navigator.language || "").toLowerCase().startsWith("en") ? "en" : "da";
 
 const STRINGS = {
   da: {
