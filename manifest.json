@@ -1,6 +1,6 @@
 {
-  "name": "Dinner Plan",
-  "short_name": "Dinner Plan",
+  "name": "Madplan",
+  "short_name": "Madplan",
   "description": "Plan your dinners and build your shopping list",
   "start_url": "/",
   "display": "standalone",

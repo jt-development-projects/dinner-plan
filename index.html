@@ -3,46 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dinner Plan</title>
+  <title>Madplan</title>
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#111111">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Dinner Plan">
+  <meta name="apple-mobile-web-app-title" content="Madplan">
   <link rel="apple-touch-icon" href="/dinner_plan_final_logo_no_line.svg">
 </head>
 <body>
 
   <nav id="main-nav" class="hidden">
-    <a href="#" class="logo" id="nav-home"><img src="logo_header.svg" alt="Dinner Plan"></a>
+    <a href="#" class="logo" id="nav-home"><img src="logo_header.svg" alt="Madplan"></a>
     <div class="nav-right">
-      <button id="btn-invite" class="btn-nav">Share with family</button>
+      <button id="btn-invite" class="btn-nav" data-i18n="navShare">Share with family</button>
       <span id="nav-user-name" class="nav-user"></span>
-      <button id="btn-signout" class="btn-nav">Sign out</button>
+      <button id="btn-signout" class="btn-nav" data-i18n="navSignout">Sign out</button>
     </div>
   </nav>
 
   <!-- AUTH: LOGIN -->
   <div id="view-auth-login" class="view auth-view">
     <div class="auth-box">
-      <div class="auth-logo">Dinner Plan</div>
-      <h2>Sign in</h2>
+      <div class="auth-logo" data-i18n="appName">Madplan</div>
+      <h2 data-i18n="signIn">Sign in</h2>
       <form id="form-login">
         <div class="field">
-          <label>Email</label>
+          <label data-i18n="email">Email</label>
           <input type="email" id="login-email" required autocomplete="email">
         </div>
         <div class="field">
-          <label>Password</label>
+          <label data-i18n="password">Password</label>
           <input type="password" id="login-password" required autocomplete="current-password">
         </div>
         <p class="auth-error hidden" id="login-error"></p>
-        <button type="submit" class="btn-primary btn-full">Sign in</button>
+        <button type="submit" class="btn-primary btn-full" data-i18n="signIn">Sign in</button>
       </form>
       <div class="auth-links">
-        <a href="#" id="link-to-register">Create an account</a>
-        <a href="#" id="link-to-forgot">Forgot password?</a>
+        <a href="#" id="link-to-register" data-i18n="createAccount">Create an account</a>
+        <a href="#" id="link-to-forgot" data-i18n="forgotPassword">Forgot password?</a>
       </div>
     </div>
   </div>
@@ -50,27 +50,27 @@
   <!-- AUTH: REGISTER -->
   <div id="view-auth-register" class="view auth-view hidden">
     <div class="auth-box">
-      <div class="auth-logo">Dinner Plan</div>
-      <h2>Create account</h2>
+      <div class="auth-logo" data-i18n="appName">Madplan</div>
+      <h2 data-i18n="createAccount">Create account</h2>
       <form id="form-register">
         <div class="field">
-          <label>Your name</label>
+          <label data-i18n="yourName">Your name</label>
           <input type="text" id="register-name" required autocomplete="name">
         </div>
         <div class="field">
-          <label>Email</label>
+          <label data-i18n="email">Email</label>
           <input type="email" id="register-email" required autocomplete="email">
         </div>
         <div class="field">
-          <label>Password</label>
+          <label data-i18n="password">Password</label>
           <input type="password" id="register-password" required autocomplete="new-password" minlength="8">
         </div>
         <p class="auth-error hidden" id="register-error"></p>
-        <button type="submit" class="btn-primary btn-full">Create account</button>
+        <button type="submit" class="btn-primary btn-full" data-i18n="createAccount">Create account</button>
       </form>
       <p class="auth-message hidden" id="register-message"></p>
       <div class="auth-links">
-        <a href="#" id="link-to-login-from-register">Back to sign in</a>
+        <a href="#" id="link-to-login-from-register" data-i18n="backToSignIn">Back to sign in</a>
       </div>
     </div>
   </div>
@@ -78,19 +78,19 @@
   <!-- AUTH: FORGOT PASSWORD -->
   <div id="view-auth-forgot" class="view auth-view hidden">
     <div class="auth-box">
-      <div class="auth-logo">Dinner Plan</div>
-      <h2>Reset password</h2>
+      <div class="auth-logo" data-i18n="appName">Madplan</div>
+      <h2 data-i18n="resetPassword">Reset password</h2>
       <form id="form-forgot">
         <div class="field">
-          <label>Email</label>
+          <label data-i18n="email">Email</label>
           <input type="email" id="forgot-email" required autocomplete="email">
         </div>
         <p class="auth-error hidden" id="forgot-error"></p>
-        <button type="submit" class="btn-primary btn-full">Send reset link</button>
+        <button type="submit" class="btn-primary btn-full" data-i18n="sendResetLink">Send reset link</button>
       </form>
       <p class="auth-message hidden" id="forgot-message"></p>
       <div class="auth-links">
-        <a href="#" id="link-to-login-from-forgot">Back to sign in</a>
+        <a href="#" id="link-to-login-from-forgot" data-i18n="backToSignIn">Back to sign in</a>
       </div>
     </div>
   </div>
@@ -98,19 +98,19 @@
   <!-- AUTH: RESET PASSWORD -->
   <div id="view-auth-reset" class="view auth-view hidden">
     <div class="auth-box">
-      <div class="auth-logo">Dinner Plan</div>
-      <h2>Set new password</h2>
+      <div class="auth-logo" data-i18n="appName">Madplan</div>
+      <h2 data-i18n="setNewPassword">Set new password</h2>
       <form id="form-reset">
         <div class="field">
-          <label>New password</label>
+          <label data-i18n="newPassword">New password</label>
           <input type="password" id="reset-password" required minlength="8">
         </div>
         <div class="field">
-          <label>Confirm password</label>
+          <label data-i18n="confirmPassword">Confirm password</label>
           <input type="password" id="reset-confirm" required minlength="8">
         </div>
         <p class="auth-error hidden" id="reset-error"></p>
-        <button type="submit" class="btn-primary btn-full">Set new password</button>
+        <button type="submit" class="btn-primary btn-full" data-i18n="setNewPassword">Set new password</button>
       </form>
     </div>
   </div>
@@ -121,36 +121,36 @@
     <div class="home-columns">
       <div class="home-left">
         <div class="home-left-header">
-          <h1>My Recipes</h1>
+          <h1 data-i18n="homeTitle">My Recipes</h1>
           <div class="home-left-actions">
-            <button id="btn-export-all" class="btn-secondary">Export All</button>
-            <button id="nav-add" class="btn-primary">+ Add Recipe</button>
+            <button id="btn-export-all" class="btn-secondary" data-i18n="btnExportAll">Export All</button>
+            <button id="nav-add" class="btn-primary" data-i18n="btnAddRecipe">+ Add Recipe</button>
           </div>
         </div>
-        <button id="btn-lock-shopping" class="btn-lock-plan">🔒 Lock Dinner Plan</button>
-        <p class="hint">Check recipes to add them to your shopping list.</p>
+        <button id="btn-lock-shopping" class="btn-lock-plan" data-i18n="btnLock">🔒 Lock Dinner Plan</button>
+        <p class="hint" data-i18n="hint">Check recipes to add them to your shopping list.</p>
         <div id="recipe-list" class="recipe-grid"></div>
-        <p id="no-recipes" class="empty-state">No recipes yet. Add your first one!</p>
+        <p id="no-recipes" class="empty-state" data-i18n="noRecipes">No recipes yet. Add your first one!</p>
 
       </div>
       <div class="home-right">
         <div class="shopping-panel">
           <div class="shopping-panel-header">
-            <h2>Shopping List</h2>
+            <h2 data-i18n="shoppingTitle">Shopping List</h2>
             <div class="shopping-actions">
-              <button id="btn-copy-shopping" class="btn-secondary">Copy</button>
-              <button id="btn-print-shopping" class="btn-secondary">Print</button>
+              <button id="btn-copy-shopping" class="btn-secondary" data-i18n="btnCopy">Copy</button>
+              <button id="btn-print-shopping" class="btn-secondary" data-i18n="btnPrint">Print</button>
             </div>
           </div>
           <div class="shopping-meta">
             <p id="shopping-summary"></p>
-            <label>People: <input type="number" id="home-people" value="4" min="1" max="50"></label>
+            <label><span data-i18n="peopleLabel">People:</span> <input type="number" id="home-people" value="4" min="1" max="50"></label>
           </div>
           <div id="shopping-loading" class="shopping-list-loading hidden">
-            <span class="spinner"></span> Building list…
+            <span class="spinner"></span> <span data-i18n="buildingList">Building list…</span>
           </div>
           <ul id="shopping-items"></ul>
-          <p id="no-shopping" class="empty-state">Check recipes to build your list.</p>
+          <p id="no-shopping" class="empty-state" data-i18n="noShopping">Check recipes to build your list.</p>
         </div>
       </div>
     </div>
@@ -158,7 +158,7 @@
 
   <!-- ADD RECIPE VIEW -->
   <div id="view-add" class="view hidden">
-    <h1 id="form-title">Add Recipe</h1>
+    <h1 id="form-title" data-i18n="addRecipeTitle">Add Recipe</h1>
 
     <div class="image-upload-area" id="image-upload-area">
       <input type="file" id="image-input" accept="image/*" multiple hidden>
@@ -167,76 +167,76 @@
         <div class="upload-btns">
           <button type="button" id="image-upload-trigger" class="upload-btn">
             <span class="upload-icon">📷</span>
-            <span class="upload-label">Take photo</span>
+            <span class="upload-label" data-i18n="takePhoto">Take photo</span>
           </button>
           <button type="button" id="image-gallery-trigger" class="upload-btn">
             <span class="upload-icon">🖼</span>
-            <span class="upload-label">Upload image</span>
+            <span class="upload-label" data-i18n="uploadImage">Upload image</span>
           </button>
         </div>
-        <span class="upload-sub">Scan a recipe — select multiple to bulk import</span>
+        <span class="upload-sub" data-i18n="uploadSub">Scan a recipe — select multiple to bulk import</span>
       </div>
       <div class="image-loading hidden" id="image-loading">
-        <span class="spinner"></span> <span id="image-loading-text">Reading recipe…</span>
+        <span class="spinner"></span> <span id="image-loading-text" data-i18n="readingRecipe">Reading recipe…</span>
       </div>
     </div>
 
     <form id="recipe-form">
       <input type="hidden" id="edit-id">
       <div class="field">
-        <label>Recipe Name</label>
-        <input type="text" id="field-name" placeholder="e.g. Beef Wellington" required>
+        <label data-i18n="recipeName">Recipe Name</label>
+        <input type="text" id="field-name" data-i18n-ph="recipeNamePh" placeholder="e.g. Beef Wellington" required>
       </div>
       <div class="field-row">
         <div class="field">
-          <label>Serves</label>
+          <label data-i18n="serves">Serves</label>
           <input type="number" id="field-serves" value="4" min="1" required>
         </div>
         <div class="field">
-          <label>Cook time (min)</label>
-          <input type="number" id="field-cook-time" placeholder="e.g. 45" min="1">
+          <label data-i18n="cookTime">Cook time (min)</label>
+          <input type="number" id="field-cook-time" data-i18n-ph="cookTimePh" placeholder="e.g. 45" min="1">
         </div>
       </div>
 
-      <div class="section-label">Ingredients</div>
+      <div class="section-label" data-i18n="ingredients">Ingredients</div>
       <div id="ingredients-list"></div>
-      <button type="button" id="btn-add-ingredient" class="btn-secondary">+ Add Ingredient</button>
+      <button type="button" id="btn-add-ingredient" class="btn-secondary" data-i18n="addIngredient">+ Add Ingredient</button>
 
-      <div class="section-label">Steps</div>
+      <div class="section-label" data-i18n="steps">Steps</div>
       <div id="steps-list"></div>
-      <button type="button" id="btn-add-step" class="btn-secondary">+ Add Step</button>
+      <button type="button" id="btn-add-step" class="btn-secondary" data-i18n="addStep">+ Add Step</button>
 
       <div class="form-actions">
-        <button type="button" id="btn-cancel" class="btn-secondary">Cancel</button>
-        <button type="submit" class="btn-primary">Save Recipe</button>
+        <button type="button" id="btn-cancel" class="btn-secondary" data-i18n="cancel">Cancel</button>
+        <button type="submit" class="btn-primary" data-i18n="saveRecipe">Save Recipe</button>
       </div>
     </form>
   </div>
 
   <!-- RECIPE DETAIL VIEW -->
   <div id="view-detail" class="view hidden">
-    <button class="back-btn" id="btn-back-detail">← Back</button>
+    <button class="back-btn" id="btn-back-detail" data-i18n="back">← Back</button>
     <div class="detail-header">
       <h1 id="detail-name"></h1>
       <div class="detail-actions">
-        <button id="btn-export-recipe" class="btn-secondary">Export</button>
-        <button id="btn-print-recipe" class="btn-secondary">Print</button>
-        <button id="btn-edit-recipe" class="btn-secondary">Edit</button>
-        <button id="btn-delete-recipe" class="btn-danger">Delete</button>
+        <button id="btn-export-recipe" class="btn-secondary" data-i18n="export">Export</button>
+        <button id="btn-print-recipe" class="btn-secondary" data-i18n="print">Print</button>
+        <button id="btn-edit-recipe" class="btn-secondary" data-i18n="edit">Edit</button>
+        <button id="btn-delete-recipe" class="btn-danger" data-i18n="delete">Delete</button>
       </div>
     </div>
     <div class="detail-scale">
-      <label>Scale for: <input type="number" id="detail-people" value="4" min="1" max="50"></label>
+      <label><span data-i18n="scaleFor">Scale for:</span> <input type="number" id="detail-people" value="4" min="1" max="50"></label>
       <span id="detail-serves-note"></span>
       <span id="detail-cook-time" class="detail-cook-time"></span>
     </div>
     <div class="detail-columns">
       <div class="detail-col">
-        <h2>Ingredients</h2>
+        <h2 data-i18n="ingredients">Ingredients</h2>
         <ul id="detail-ingredients"></ul>
       </div>
       <div class="detail-col">
-        <h2>Steps</h2>
+        <h2 data-i18n="steps">Steps</h2>
         <ol id="detail-steps"></ol>
       </div>
     </div>

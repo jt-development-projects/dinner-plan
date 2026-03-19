@@ -2,6 +2,125 @@
 
 const UNITS = ["", "g", "kg", "ml", "dl", "l", "tsp", "tbsp", "cup", "pcs", "pinch", "slices", "bunch"];
 
+// ─── Internationalisation ──────────────────────────────────────────────────
+
+const LANG = navigator.language?.startsWith("da") ? "da" : "en";
+
+const STRINGS = {
+  da: {
+    appName: "Madplan",
+    navShare: "Del med familie", navSignout: "Log ud",
+    homeTitle: "Mine opskrifter", btnExportAll: "Eksporter alle", btnAddRecipe: "+ Tilføj opskrift",
+    shoppingTitle: "Indkøbsliste", btnLock: "🔒 Lås madplan", btnUnlock: "🔓 Lås op",
+    btnCopy: "Kopier", btnPrint: "Udskriv",
+    peopleLabel: "Personer:", hint: "Vælg opskrifter for at tilføje dem til din indkøbsliste.",
+    noRecipes: "Ingen opskrifter endnu. Tilføj din første!", noShopping: "Vælg opskrifter for at bygge din liste.",
+    thisWeek: "Denne uge", allRecipes: "Alle opskrifter", buildingList: "Bygger liste…",
+    recipeCount: n => `${n} opskrift${n !== 1 ? "er" : ""}`,
+    signIn: "Log ind", signingIn: "Logger ind…",
+    createAccount: "Opret konto", creatingAccount: "Opretter konto…",
+    yourName: "Dit navn", email: "E-mail", password: "Adgangskode",
+    forgotPassword: "Glemt adgangskode?", resetPassword: "Nulstil adgangskode",
+    newPassword: "Ny adgangskode", confirmPassword: "Bekræft adgangskode",
+    sendResetLink: "Send nulstillingslink", sending: "Sender…",
+    setNewPassword: "Angiv ny adgangskode", backToSignIn: "Tilbage til log ind",
+    checkEmailConfirm: "Tjek din e-mail for at bekræfte din konto, og log derefter ind.",
+    resetEmailSent: "Nulstillingslink sendt — tjek din e-mail.",
+    passwordMismatch: "Adgangskoderne matcher ikke.",
+    addRecipeTitle: "Tilføj opskrift", editRecipeTitle: "Rediger opskrift",
+    recipeName: "Opskriftsnavn", recipeNamePh: "f.eks. Lasagne",
+    serves: "Portioner", cookTime: "Tilberedningstid (min)", cookTimePh: "f.eks. 45",
+    ingredients: "Ingredienser", addIngredient: "+ Tilføj ingrediens",
+    ingredientPh: "Ingrediens", amountPh: "Mængde", stepPh: "Beskriv dette trin…",
+    steps: "Fremgangsmåde", addStep: "+ Tilføj trin",
+    cancel: "Annuller", saveRecipe: "Gem opskrift",
+    takePhoto: "Tag foto", uploadImage: "Upload billede",
+    uploadSub: "Scan en opskrift — vælg flere for at importere mange",
+    readingRecipe: "Læser opskrift…",
+    savingRecipeOf: (n, tot) => `Gemmer opskrift ${n} af ${tot}…`,
+    normalising: "Normaliserer…", saving: "Gemmer…",
+    back: "← Tilbage", export: "Eksporter", print: "Udskriv", edit: "Rediger", delete: "Slet",
+    scaleFor: "Skaler til:",
+    originalServes: n => `(original opskrift er til ${n})`,
+    originalServesScaled: n => `(original er til ${n})`,
+    linkCopied: "Kopieret!",
+    deleteConfirm: name => `Slet "${name}"? Dette kan ikke fortrydes.`,
+    saveError: "Kunne ikke gemme opskrift.", loadError: "Kunne ikke indlæse opskrifter.",
+    deleteError: "Kunne ikke slette opskrift.", readError: "Kunne ikke læse opskrift: ",
+    bulkResult: (saved, failed) => `Gemte ${saved} opskrift${saved !== 1 ? "er" : ""}. ${failed} kunne ikke læses.`,
+    inviteError: "Kunne ikke generere invitationslink: ",
+    fillAllFields: "Udfyld venligst alle felter, og tilføj mindst én ingrediens og ét trin.",
+    cookTimeDisplay: min => `${min} min`,
+  },
+  en: {
+    appName: "Madplan",
+    navShare: "Share with family", navSignout: "Sign out",
+    homeTitle: "My Recipes", btnExportAll: "Export All", btnAddRecipe: "+ Add Recipe",
+    shoppingTitle: "Shopping List", btnLock: "🔒 Lock Dinner Plan", btnUnlock: "🔓 Unlock",
+    btnCopy: "Copy", btnPrint: "Print",
+    peopleLabel: "People:", hint: "Check recipes to add them to your shopping list.",
+    noRecipes: "No recipes yet. Add your first one!", noShopping: "Check recipes to build your list.",
+    thisWeek: "This week", allRecipes: "All recipes", buildingList: "Building list…",
+    recipeCount: n => `${n} recipe${n !== 1 ? "s" : ""}`,
+    signIn: "Sign in", signingIn: "Signing in…",
+    createAccount: "Create account", creatingAccount: "Creating account…",
+    yourName: "Your name", email: "Email", password: "Password",
+    forgotPassword: "Forgot password?", resetPassword: "Reset password",
+    newPassword: "New password", confirmPassword: "Confirm password",
+    sendResetLink: "Send reset link", sending: "Sending…",
+    setNewPassword: "Set new password", backToSignIn: "Back to sign in",
+    checkEmailConfirm: "Check your email to confirm your account, then sign in.",
+    resetEmailSent: "Password reset link sent — check your email.",
+    passwordMismatch: "Passwords do not match.",
+    addRecipeTitle: "Add Recipe", editRecipeTitle: "Edit Recipe",
+    recipeName: "Recipe Name", recipeNamePh: "e.g. Beef Wellington",
+    serves: "Serves", cookTime: "Cook time (min)", cookTimePh: "e.g. 45",
+    ingredients: "Ingredients", addIngredient: "+ Add Ingredient",
+    ingredientPh: "Ingredient", amountPh: "Amount", stepPh: "Describe this step…",
+    steps: "Steps", addStep: "+ Add Step",
+    cancel: "Cancel", saveRecipe: "Save Recipe",
+    takePhoto: "Take photo", uploadImage: "Upload image",
+    uploadSub: "Scan a recipe — select multiple to bulk import",
+    readingRecipe: "Reading recipe…",
+    savingRecipeOf: (n, tot) => `Saving recipe ${n} of ${tot}…`,
+    normalising: "Normalising…", saving: "Saving…",
+    back: "← Back", export: "Export", print: "Print", edit: "Edit", delete: "Delete",
+    scaleFor: "Scale for:",
+    originalServes: n => `(original recipe serves ${n})`,
+    originalServesScaled: n => `(original serves ${n})`,
+    linkCopied: "Link copied!",
+    deleteConfirm: name => `Delete "${name}"? This cannot be undone.`,
+    saveError: "Could not save recipe.", loadError: "Could not load recipes.",
+    deleteError: "Could not delete recipe.", readError: "Could not read recipe: ",
+    bulkResult: (saved, failed) => `Saved ${saved} recipe${saved !== 1 ? "s" : ""}. ${failed} could not be read.`,
+    inviteError: "Could not generate invite link: ",
+    fillAllFields: "Please fill in all fields, and add at least one ingredient and one step.",
+    cookTimeDisplay: min => `${min} min`,
+  },
+};
+
+function t(key) { return STRINGS[LANG][key] ?? STRINGS.en[key] ?? key; }
+
+const UNIT_LABELS = {
+  da: { "": "—", g: "g", kg: "kg", ml: "ml", dl: "dl", l: "l", tsp: "tsk", tbsp: "spsk", cup: "kop", pcs: "stk", pinch: "knivspids", slices: "skiver", bunch: "bundt" },
+  en: { "": "—", g: "g", kg: "kg", ml: "ml", dl: "dl", l: "l", tsp: "tsp", tbsp: "tbsp", cup: "cup", pcs: "pcs", pinch: "pinch", slices: "slices", bunch: "bunch" },
+};
+function unitLabel(u) { return UNIT_LABELS[LANG][u] ?? u || "—"; }
+
+const PANTRY_STAPLES = /^(salt|peber|pepper|salt\s*(og|and|&)\s*(peber|pepper).*|.*friskkværnet\s*peber|freshly?\s*ground\s*pepper)$/i;
+function isPantryStaple(name) { return PANTRY_STAPLES.test(name.trim()); }
+
+function applyLanguage() {
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const val = t(el.dataset.i18n);
+    if (val) el.textContent = val;
+  });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => {
+    const val = t(el.dataset.i18nPh);
+    if (val) el.placeholder = val;
+  });
+}
+
 // ─── State ────────────────────────────────────────────────────────────────────
 
 let sb;
@@ -108,14 +227,14 @@ document.getElementById("form-login").addEventListener("submit", async e => {
   const errEl    = document.getElementById("login-error");
   const btn      = e.target.querySelector("button[type='submit']");
   errEl.classList.add("hidden");
-  btn.textContent = "Signing in…";
+  btn.textContent = t("signingIn");
   btn.disabled = true;
 
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
   if (error) {
     errEl.textContent = error.message;
     errEl.classList.remove("hidden");
-    btn.textContent = "Sign in";
+    btn.textContent = t("signIn");
     btn.disabled = false;
   } else {
     currentUser = data.user;
@@ -135,7 +254,7 @@ document.getElementById("form-register").addEventListener("submit", async e => {
   const btn      = e.target.querySelector("button[type='submit']");
   errEl.classList.add("hidden");
   msgEl.classList.add("hidden");
-  btn.textContent = "Creating account…";
+  btn.textContent = t("creatingAccount");
   btn.disabled = true;
 
   const { error } = await sb.auth.signUp({
@@ -147,11 +266,11 @@ document.getElementById("form-register").addEventListener("submit", async e => {
   if (error) {
     errEl.textContent = error.message;
     errEl.classList.remove("hidden");
-    btn.textContent = "Create account";
+    btn.textContent = t("createAccount");
     btn.disabled = false;
   } else {
     document.getElementById("form-register").classList.add("hidden");
-    msgEl.textContent = "Check your email to confirm your account, then sign in.";
+    msgEl.textContent = t("checkEmailConfirm");
     msgEl.classList.remove("hidden");
   }
 });
@@ -164,7 +283,7 @@ document.getElementById("form-forgot").addEventListener("submit", async e => {
   const btn   = e.target.querySelector("button[type='submit']");
   errEl.classList.add("hidden");
   msgEl.classList.add("hidden");
-  btn.textContent = "Sending…";
+  btn.textContent = t("sending");
   btn.disabled = true;
 
   const { error } = await sb.auth.resetPasswordForEmail(email, {
@@ -174,11 +293,11 @@ document.getElementById("form-forgot").addEventListener("submit", async e => {
   if (error) {
     errEl.textContent = error.message;
     errEl.classList.remove("hidden");
-    btn.textContent = "Send reset link";
+    btn.textContent = t("sendResetLink");
     btn.disabled = false;
   } else {
     document.getElementById("form-forgot").classList.add("hidden");
-    msgEl.textContent = "Password reset link sent — check your email.";
+    msgEl.textContent = t("resetEmailSent");
     msgEl.classList.remove("hidden");
   }
 });
@@ -192,19 +311,19 @@ document.getElementById("form-reset").addEventListener("submit", async e => {
   errEl.classList.add("hidden");
 
   if (password !== confirm) {
-    errEl.textContent = "Passwords do not match.";
+    errEl.textContent = t("passwordMismatch");
     errEl.classList.remove("hidden");
     return;
   }
 
-  btn.textContent = "Saving…";
+  btn.textContent = t("saving");
   btn.disabled = true;
 
   const { error } = await sb.auth.updateUser({ password });
   if (error) {
     errEl.textContent = error.message;
     errEl.classList.remove("hidden");
-    btn.textContent = "Set new password";
+    btn.textContent = t("setNewPassword");
     btn.disabled = false;
   } else {
     await loadUserGroup();
@@ -241,13 +360,13 @@ async function createPersonalGroup() {
 }
 
 async function joinViaToken(token) {
-  let t = token;
-  try { t = new URL(token).searchParams.get("invite") || token; } catch {}
+  let tok = token;
+  try { tok = new URL(token).searchParams.get("invite") || token; } catch {}
 
   const { data: invite } = await sb
     .from("invite_tokens")
     .select("group_id, expires_at")
-    .eq("token", t)
+    .eq("token", tok)
     .single();
 
   if (!invite || new Date(invite.expires_at) < new Date()) {
@@ -278,13 +397,13 @@ document.getElementById("btn-invite").addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(url);
       const orig = btn.textContent;
-      btn.textContent = "Link copied!";
+      btn.textContent = t("linkCopied");
       setTimeout(() => btn.textContent = orig, 2000);
     } catch {
       prompt("Copy this invite link and share it:", url);
     }
   } catch (err) {
-    alert("Could not generate invite link: " + err.message);
+    alert(t("inviteError") + err.message);
   }
 });
 
@@ -316,7 +435,7 @@ async function renderHome(refresh = false) {
       recipes = await apiGet();
       recipesLoaded = true;
     } catch (e) {
-      showError("Could not load recipes.");
+      showError(t("loadError"));
       return;
     }
   }
@@ -341,7 +460,7 @@ async function renderHome(refresh = false) {
   if (shoppingLocked && thisWeek.length) {
     const label = document.createElement("div");
     label.className = "recipe-section-label";
-    label.textContent = "This week";
+    label.textContent = t("thisWeek");
     grid.appendChild(label);
   }
 
@@ -357,7 +476,7 @@ async function renderHome(refresh = false) {
     if (shoppingLocked && thisWeek.length && !checked && !dividerAdded) {
       const divider = document.createElement("div");
       divider.className = "recipe-section-label recipe-section-rest";
-      divider.textContent = "All recipes";
+      divider.textContent = t("allRecipes");
       grid.appendChild(divider);
       dividerAdded = true;
     }
@@ -374,7 +493,7 @@ async function renderHome(refresh = false) {
 
     const meta = document.createElement("div");
     meta.className   = "card-meta";
-    if (recipe.cook_time) meta.textContent = `${recipe.cook_time} min`;
+    if (recipe.cook_time) meta.textContent = t("cookTimeDisplay")(recipe.cook_time);
 
     card.appendChild(cb);
     card.appendChild(name);
@@ -409,7 +528,7 @@ function openAddView(recipeId = null) {
   document.getElementById("edit-id").value = "";
   document.getElementById("ingredients-list").innerHTML = "";
   document.getElementById("steps-list").innerHTML = "";
-  document.getElementById("form-title").textContent = recipeId ? "Edit Recipe" : "Add Recipe";
+  document.getElementById("form-title").textContent = recipeId ? t("editRecipeTitle") : t("addRecipeTitle");
 
   if (recipeId) {
     const recipe = recipes.find(r => r.id === recipeId);
@@ -436,12 +555,12 @@ function addIngredientRow(ing = {}) {
   const unitValue   = (ing.unit || "").toLowerCase();
   const matchedUnit = UNITS.find(u => u === unitValue) ?? "";
   const unitOptions = UNITS.map(u =>
-    `<option value="${u}"${u === matchedUnit ? " selected" : ""}>${u || "—"}</option>`
+    `<option value="${u}"${u === matchedUnit ? " selected" : ""}>${unitLabel(u)}</option>`
   ).join("");
 
   row.innerHTML = `
-    <input type="text" name="ing-name" placeholder="Ingredient" value="${escAttr(ing.name || "")}" required>
-    <input type="number" name="ing-amount" placeholder="Amount" value="${ing.amount != null ? ing.amount : ""}" min="0" step="any">
+    <input type="text" name="ing-name" placeholder="${escAttr(t("ingredientPh"))}" value="${escAttr(ing.name || "")}" required>
+    <input type="number" name="ing-amount" placeholder="${escAttr(t("amountPh"))}" value="${ing.amount != null ? ing.amount : ""}" min="0" step="any">
     <select name="ing-unit">${unitOptions}</select>
     <button type="button" class="remove-btn" title="Remove">×</button>
   `;
@@ -456,7 +575,7 @@ function addStepRow(text = "") {
   const n = list.children.length + 1;
   row.innerHTML = `
     <div class="step-number">${n}</div>
-    <textarea name="step-text" placeholder="Describe this step…" required>${escHtml(text)}</textarea>
+    <textarea name="step-text" placeholder="${escAttr(t("stepPh"))}" required>${escHtml(text)}</textarea>
     <button type="button" class="remove-btn" title="Remove">×</button>
   `;
   row.querySelector(".remove-btn").addEventListener("click", () => {
@@ -500,7 +619,7 @@ async function handleImageFiles(files, inputEl) {
 
   let saved = 0, failed = 0;
   for (let i = 0; i < files.length; i++) {
-    loadingText.textContent = `Reading recipe ${i + 1} of ${files.length}…`;
+    loadingText.textContent = t("readingRecipe");
     try {
       const base64     = await compressImage(files[i]);
       const controller = new AbortController();
@@ -514,7 +633,7 @@ async function handleImageFiles(files, inputEl) {
       clearTimeout(timeout);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Unknown error");
-      loadingText.textContent = `Saving recipe ${i + 1} of ${files.length}…`;
+      loadingText.textContent = t("savingRecipeOf")(i + 1, files.length);
       await apiSave(data);
       saved++;
     } catch {
@@ -526,7 +645,7 @@ async function handleImageFiles(files, inputEl) {
   inner.classList.remove("hidden");
   inputEl.value = "";
 
-  if (failed > 0) alert(`Saved ${saved} recipe${saved !== 1 ? "s" : ""}. ${failed} could not be read.`);
+  if (failed > 0) alert(t("bulkResult")(saved, failed));
   await renderHome(true);
 }
 
@@ -537,7 +656,7 @@ async function handleImageFile(file, inputEl) {
   const loadingText = document.getElementById("image-loading-text");
   inner.classList.add("hidden");
   loading.classList.remove("hidden");
-  loadingText.textContent = "Reading recipe…";
+  loadingText.textContent = t("readingRecipe");
 
   try {
     const base64 = await compressImage(file);
@@ -550,7 +669,7 @@ async function handleImageFile(file, inputEl) {
     if (!res.ok) throw new Error(data.error || "Unknown error");
     fillFormFromRecipe(data);
   } catch (err) {
-    alert("Could not read recipe: " + err.message);
+    alert(t("readError") + err.message);
   } finally {
     loading.classList.add("hidden");
     inner.classList.remove("hidden");
@@ -626,17 +745,17 @@ document.getElementById("recipe-form").addEventListener("submit", async e => {
   });
 
   if (!name || serves < 1 || ingredients.length === 0 || steps.length === 0) {
-    alert("Please fill in all fields, and add at least one ingredient and one step.");
+    alert(t("fillAllFields"));
     return;
   }
 
   const saveBtn = e.target.querySelector("button[type='submit']");
-  saveBtn.textContent = "Normalising…";
+  saveBtn.textContent = t("normalising");
   saveBtn.disabled = true;
 
   const normalisedIngredients = await normaliseIngredients(ingredients);
 
-  saveBtn.textContent = "Saving…";
+  saveBtn.textContent = t("saving");
 
   const recipe = { name, serves, cook_time: cookTime, ingredients: normalisedIngredients, steps };
   if (editId) recipe.id = editId;
@@ -644,8 +763,8 @@ document.getElementById("recipe-form").addEventListener("submit", async e => {
   try {
     await apiSave(recipe);
   } catch (err) {
-    showError("Could not save recipe.");
-    saveBtn.textContent = "Save Recipe";
+    showError(t("saveError"));
+    saveBtn.textContent = t("saveRecipe");
     saveBtn.disabled = false;
     return;
   }
@@ -668,7 +787,7 @@ function openDetail(id) {
   document.getElementById("detail-name").textContent = recipe.name;
   document.getElementById("detail-people").value = recipe.serves;
   const cookTimeEl = document.getElementById("detail-cook-time");
-  cookTimeEl.textContent = recipe.cook_time ? `${recipe.cook_time} min` : "";
+  cookTimeEl.textContent = recipe.cook_time ? t("cookTimeDisplay")(recipe.cook_time) : "";
   renderDetailIngredients(recipe, recipe.serves);
 
   const stepsList = document.getElementById("detail-steps");
@@ -684,14 +803,14 @@ function renderDetailIngredients(recipe, people) {
   list.innerHTML = recipe.ingredients.map(ing => {
     if (ing.amount == null) return `<li><strong>${escHtml(ing.name)}</strong></li>`;
     const scaled = formatAmount(ing.amount * scale);
-    const unit   = ing.unit ? ` ${ing.unit}` : "";
+    const unit   = ing.unit ? ` ${unitLabel(ing.unit)}` : "";
     return `<li><strong>${escHtml(ing.name)}</strong> — ${scaled}${escHtml(unit)}</li>`;
   }).join("");
 
   const note = document.getElementById("detail-serves-note");
   note.textContent = people === recipe.serves
-    ? `(original recipe serves ${recipe.serves})`
-    : `(original serves ${recipe.serves})`;
+    ? t("originalServes")(recipe.serves)
+    : t("originalServesScaled")(recipe.serves);
 }
 
 document.getElementById("detail-people").addEventListener("input", e => {
@@ -708,11 +827,11 @@ document.getElementById("btn-edit-recipe").addEventListener("click", () => {
 document.getElementById("btn-delete-recipe").addEventListener("click", async () => {
   const recipe = recipes.find(r => r.id === currentDetailId);
   if (!recipe) return;
-  if (!confirm(`Delete "${recipe.name}"? This cannot be undone.`)) return;
+  if (!confirm(t("deleteConfirm")(recipe.name))) return;
   try {
     await apiDelete(currentDetailId);
   } catch (err) {
-    showError("Could not delete recipe.");
+    showError(t("deleteError"));
     return;
   }
   releaseWakeLock();
@@ -822,7 +941,7 @@ async function renderShoppingList() {
   }
 
   noShopping.classList.add("hidden");
-  summary.textContent = `${selected.length} recipe${selected.length > 1 ? "s" : ""}`;
+  summary.textContent = t("recipeCount")(selected.length);
 
   // Fetch AI groupings (cached per selection, skipped if only one recipe)
   const allNames = [...new Set(selected.flatMap(r => r.ingredients.map(i => i.name)))];
@@ -853,6 +972,11 @@ async function renderShoppingList() {
     });
   });
 
+  // Remove pantry staples
+  for (const key of nameMap.keys()) {
+    if (isPantryStaple(nameMap.get(key).displayName)) nameMap.delete(key);
+  }
+
   Array.from(nameMap.entries())
     .sort((a, b) => a[0].localeCompare(b[0]))
     .forEach(([key, entry]) => {
@@ -860,10 +984,10 @@ async function renderShoppingList() {
       entry.families.forEach((base, family) => {
         const converted = fromBaseAmount(base, family);
         if (converted) {
-          parts.push(`${formatAmount(converted.amount)} ${converted.unit}`);
+          parts.push(`${formatAmount(converted.amount)} ${unitLabel(converted.unit)}`);
         } else {
           // pcs, pinch, slices, bunch, or no-unit
-          const unit = family === "__none__" ? "" : ` ${family}`;
+          const unit = family === "__none__" ? "" : ` ${unitLabel(family)}`;
           parts.push(`${formatAmount(base)}${unit}`.trim());
         }
       });
@@ -936,7 +1060,7 @@ function applyLockState() {
   const people   = document.getElementById("home-people");
 
   homeView.classList.toggle("shopping-locked", shoppingLocked);
-  lockBtn.textContent = shoppingLocked ? "🔓 Unlock Dinner Plan" : "🔒 Lock Dinner Plan";
+  lockBtn.textContent = shoppingLocked ? t("btnUnlock") : t("btnLock");
 
   document.querySelectorAll(".card-checkbox").forEach(cb => {
     cb.disabled = shoppingLocked;
@@ -1050,6 +1174,8 @@ async function loadUserGroup() {
 }
 
 async function initApp() {
+  applyLanguage();
+
   const urlParams = new URLSearchParams(window.location.search);
   pendingInviteToken = urlParams.get("invite");
   if (pendingInviteToken) localStorage.setItem("pendingInvite", pendingInviteToken);
