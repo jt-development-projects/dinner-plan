@@ -69,7 +69,7 @@ async function apiGet() {
     .select("*")
     .eq("group_id", currentGroupId);
   if (error) throw error;
-  return data.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+  return data.sort((a, b) => a.name.localeCompare(b.name, "da", { sensitivity: "base" }));
 }
 
 async function apiSave(recipe) {
