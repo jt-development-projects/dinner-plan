@@ -720,6 +720,15 @@ nav button:hover { background: #ddd; }
 
 #no-shopping { margin: 20px 14px; text-align: left; }
 
+.shopping-list-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  font-size: .75rem;
+  color: var(--muted);
+}
+
 /* LOCK DINNER PLAN BUTTON */
 .btn-lock-plan {
   display: block;

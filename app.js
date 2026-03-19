@@ -384,6 +384,7 @@ async function renderHome(refresh = false) {
       e.stopPropagation();
       if (e.target.checked) checkedIds.add(recipe.id);
       else checkedIds.delete(recipe.id);
+      invalidateGroupingsCache();
       savePlan();
       renderShoppingList();
     });
@@ -727,6 +728,37 @@ document.getElementById("btn-back-detail").addEventListener("click", () => {
   renderHome();
 });
 
+// ─── Ingredient grouping cache ────────────────────────────────────────────────
+
+let groupingsCache = null;
+let groupingsCacheKey = null;
+
+async function fetchIngredientGroupings(names) {
+  const key = [...checkedIds].sort().join("|");
+  if (groupingsCacheKey === key && groupingsCache) return groupingsCache;
+  try {
+    const controller = new AbortController();
+    setTimeout(() => controller.abort(), 15000);
+    const res = await fetch("/api/group-ingredients", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ names }),
+      signal: controller.signal,
+    });
+    const { canonical } = await res.json();
+    groupingsCache    = canonical || {};
+    groupingsCacheKey = key;
+    return groupingsCache;
+  } catch {
+    return {};
+  }
+}
+
+function invalidateGroupingsCache() {
+  groupingsCache    = null;
+  groupingsCacheKey = null;
+}
+
 // ─── Shopping List (inline) ───────────────────────────────────────────────────
 
 // Unit conversion tables (to base unit)
@@ -768,17 +800,19 @@ function fromBaseAmount(base, family) {
   return null;
 }
 
-function renderShoppingList() {
+async function renderShoppingList() {
   const people   = Math.max(1, parseInt(document.getElementById("home-people").value, 10) || 1);
   const selected = recipes.filter(r => checkedIds.has(r.id));
 
   const noShopping = document.getElementById("no-shopping");
   const itemsList  = document.getElementById("shopping-items");
   const summary    = document.getElementById("shopping-summary");
+  const loadingEl  = document.getElementById("shopping-loading");
   itemsList.innerHTML = "";
 
   if (selected.length === 0) {
     noShopping.classList.remove("hidden");
+    loadingEl.classList.add("hidden");
     summary.textContent = "";
     return;
   }
@@ -786,13 +820,23 @@ function renderShoppingList() {
   noShopping.classList.add("hidden");
   summary.textContent = `${selected.length} recipe${selected.length > 1 ? "s" : ""}`;
 
+  // Fetch AI groupings (cached per selection, skipped if only one recipe)
+  const allNames = [...new Set(selected.flatMap(r => r.ingredients.map(i => i.name)))];
+  let canonical = {};
+  if (selected.length > 1) {
+    loadingEl.classList.remove("hidden");
+    canonical = await fetchIngredientGroupings(allNames);
+    loadingEl.classList.add("hidden");
+  }
+
   // name → { displayName, families: Map<family, baseAmount>, hasNoAmount }
   const nameMap = new Map();
   selected.forEach(recipe => {
     const scale = people / recipe.serves;
     recipe.ingredients.forEach(ing => {
-      const key = ing.name.toLowerCase().trim();
-      if (!nameMap.has(key)) nameMap.set(key, { displayName: ing.name, families: new Map(), hasNoAmount: false });
+      const resolved = canonical[ing.name] || ing.name;
+      const key      = resolved.toLowerCase().trim();
+      if (!nameMap.has(key)) nameMap.set(key, { displayName: resolved, families: new Map(), hasNoAmount: false });
       const entry = nameMap.get(key);
 
       if (ing.amount == null) { entry.hasNoAmount = true; return; }
