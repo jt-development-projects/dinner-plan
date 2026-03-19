@@ -227,6 +227,7 @@ document.getElementById("form-login").addEventListener("submit", async e => {
   const errEl    = document.getElementById("login-error");
   const btn      = e.target.querySelector("button[type='submit']");
   errEl.classList.add("hidden");
+  if (!sb) { errEl.textContent = "App not ready — please reload."; errEl.classList.remove("hidden"); return; }
   btn.textContent = t("signingIn");
   btn.disabled = true;
 
@@ -1180,7 +1181,21 @@ async function initApp() {
   pendingInviteToken = urlParams.get("invite");
   if (pendingInviteToken) localStorage.setItem("pendingInvite", pendingInviteToken);
 
-  const config = await fetch("/api/config").then(r => r.json());
+  let config;
+  try {
+    const res = await fetch("/api/config");
+    if (!res.ok) throw new Error(`Config HTTP ${res.status}`);
+    config = await res.json();
+  } catch (err) {
+    document.getElementById("login-error").textContent = "App failed to load: " + err.message;
+    document.getElementById("login-error").classList.remove("hidden");
+    return;
+  }
+  if (!config.supabaseUrl || !config.supabaseAnonKey) {
+    document.getElementById("login-error").textContent = "App not configured (missing Supabase env vars).";
+    document.getElementById("login-error").classList.remove("hidden");
+    return;
+  }
   sb = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
 
   sb.auth.onAuthStateChange(async (event, session) => {
