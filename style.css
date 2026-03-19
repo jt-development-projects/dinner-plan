@@ -313,7 +313,24 @@ nav button:hover { background: #ddd; }
   accent-color: #111;
 }
 
-.card-name { font-size: .9rem; }
+.card-name { font-size: .9rem; flex: 1; }
+
+.card-meta {
+  font-size: .72rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.field-row {
+  display: flex;
+  gap: 16px;
+}
+.field-row .field { flex: 1; }
+
+.detail-cook-time {
+  font-size: .78rem;
+  color: var(--muted);
+}
 
 .empty-state {
   text-align: center;

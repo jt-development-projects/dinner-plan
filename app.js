@@ -86,7 +86,7 @@ async function apiSave(recipe) {
   } else {
     const { data, error } = await sb
       .from("recipes")
-      .update({ name: recipe.name, serves: recipe.serves, ingredients: recipe.ingredients, steps: recipe.steps })
+      .update({ name: recipe.name, serves: recipe.serves, cook_time: recipe.cook_time, ingredients: recipe.ingredients, steps: recipe.steps })
       .eq("id", recipe.id)
       .select()
       .single();
@@ -373,8 +373,13 @@ async function renderHome(refresh = false) {
     name.className   = "card-name";
     name.textContent = recipe.name;
 
+    const meta = document.createElement("div");
+    meta.className   = "card-meta";
+    if (recipe.cook_time) meta.textContent = `${recipe.cook_time} min`;
+
     card.appendChild(cb);
     card.appendChild(name);
+    card.appendChild(meta);
 
     cb.addEventListener("change", e => {
       e.stopPropagation();
@@ -412,6 +417,7 @@ function openAddView(recipeId = null) {
     document.getElementById("edit-id").value = recipe.id;
     document.getElementById("field-name").value = recipe.name;
     document.getElementById("field-serves").value = recipe.serves;
+    document.getElementById("field-cook-time").value = recipe.cook_time || "";
     recipe.ingredients.forEach(ing => addIngredientRow(ing));
     recipe.steps.forEach(step => addStepRow(step));
   } else {
@@ -578,8 +584,9 @@ function compressImage(file) {
 }
 
 function fillFormFromRecipe(recipe) {
-  if (recipe.name)   document.getElementById("field-name").value = recipe.name;
-  if (recipe.serves) document.getElementById("field-serves").value = recipe.serves;
+  if (recipe.name)      document.getElementById("field-name").value = recipe.name;
+  if (recipe.serves)    document.getElementById("field-serves").value = recipe.serves;
+  if (recipe.cook_time) document.getElementById("field-cook-time").value = recipe.cook_time;
 
   document.getElementById("ingredients-list").innerHTML = "";
   (recipe.ingredients || []).forEach(ing => addIngredientRow(ing));
@@ -596,9 +603,10 @@ document.getElementById("btn-add-step").addEventListener("click", () => addStepR
 document.getElementById("recipe-form").addEventListener("submit", async e => {
   e.preventDefault();
 
-  const name   = document.getElementById("field-name").value.trim();
-  const serves = parseInt(document.getElementById("field-serves").value, 10);
-  const editId = document.getElementById("edit-id").value;
+  const name     = document.getElementById("field-name").value.trim();
+  const serves   = parseInt(document.getElementById("field-serves").value, 10);
+  const cookTime = parseInt(document.getElementById("field-cook-time").value, 10) || null;
+  const editId   = document.getElementById("edit-id").value;
 
   const ingredients = [];
   document.querySelectorAll("#ingredients-list .ingredient-row").forEach(row => {
@@ -627,7 +635,7 @@ document.getElementById("recipe-form").addEventListener("submit", async e => {
 
   saveBtn.textContent = "Saving…";
 
-  const recipe = { name, serves, ingredients: normalisedIngredients, steps };
+  const recipe = { name, serves, cook_time: cookTime, ingredients: normalisedIngredients, steps };
   if (editId) recipe.id = editId;
 
   try {
@@ -656,6 +664,8 @@ function openDetail(id) {
   currentDetailId = id;
   document.getElementById("detail-name").textContent = recipe.name;
   document.getElementById("detail-people").value = recipe.serves;
+  const cookTimeEl = document.getElementById("detail-cook-time");
+  cookTimeEl.textContent = recipe.cook_time ? `${recipe.cook_time} min` : "";
   renderDetailIngredients(recipe, recipe.serves);
 
   const stepsList = document.getElementById("detail-steps");

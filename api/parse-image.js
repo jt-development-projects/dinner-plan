@@ -11,6 +11,7 @@ export default async function handler(req, res) {
 {
   "name": "Recipe Name",
   "serves": 4,
+  "cook_time": 45,
   "ingredients": [
     { "name": "Ingredient", "amount": 100, "unit": "g" }
   ],
@@ -22,6 +23,7 @@ export default async function handler(req, res) {
 
 Rules:
 - serves must be a number (default to 4 if not shown)
+- cook_time is total cook time in minutes as a number — add prep + cook time if both shown. Omit the field (do not include it) if not mentioned
 - amount must be a number (default to 1 if unclear)
 - unit must be one of exactly: g, kg, ml, dl, l, tsp, tbsp, cup, pcs, pinch, slices, bunch — or empty string if none. Always normalise to these English abbreviations regardless of the language in the image (e.g. spsk → tbsp, stk → pcs, knivspids → pinch, dl is already canonical)
 - steps should be plain text sentences

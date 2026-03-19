@@ -178,9 +178,15 @@
         <label>Recipe Name</label>
         <input type="text" id="field-name" placeholder="e.g. Beef Wellington" required>
       </div>
-      <div class="field">
-        <label>Serves</label>
-        <input type="number" id="field-serves" value="4" min="1" required>
+      <div class="field-row">
+        <div class="field">
+          <label>Serves</label>
+          <input type="number" id="field-serves" value="4" min="1" required>
+        </div>
+        <div class="field">
+          <label>Cook time (min)</label>
+          <input type="number" id="field-cook-time" placeholder="e.g. 45" min="1">
+        </div>
       </div>
 
       <div class="section-label">Ingredients</div>
@@ -213,6 +219,7 @@
     <div class="detail-scale">
       <label>Scale for: <input type="number" id="detail-people" value="4" min="1" max="50"></label>
       <span id="detail-serves-note"></span>
+      <span id="detail-cook-time" class="detail-cook-time"></span>
     </div>
     <div class="detail-columns">
       <div class="detail-col">
