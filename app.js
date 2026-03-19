@@ -476,12 +476,57 @@ document.getElementById("image-gallery-trigger").addEventListener("click", () =>
   document.getElementById("image-input").click();
 });
 
-async function handleImageFile(file, inputEl) {
-  if (!file) return;
-  const inner   = document.querySelector(".image-upload-inner");
-  const loading = document.getElementById("image-loading");
+async function handleImageFiles(files, inputEl) {
+  if (!files.length) return;
+
+  if (files.length === 1) {
+    // Single image: fill the form for review
+    await handleImageFile(files[0], inputEl);
+    return;
+  }
+
+  // Multiple images: parse and save all directly
+  const inner       = document.querySelector(".image-upload-inner");
+  const loading     = document.getElementById("image-loading");
+  const loadingText = document.getElementById("image-loading-text");
   inner.classList.add("hidden");
   loading.classList.remove("hidden");
+
+  let saved = 0, failed = 0;
+  for (let i = 0; i < files.length; i++) {
+    loadingText.textContent = `Saving recipe ${i + 1} of ${files.length}…`;
+    try {
+      const base64 = await compressImage(files[i]);
+      const res    = await fetch("/api/parse-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: base64, mediaType: "image/jpeg" }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Unknown error");
+      await apiSave(data);
+      saved++;
+    } catch {
+      failed++;
+    }
+  }
+
+  loading.classList.add("hidden");
+  inner.classList.remove("hidden");
+  inputEl.value = "";
+
+  if (failed > 0) alert(`Saved ${saved} recipe${saved !== 1 ? "s" : ""}. ${failed} could not be read.`);
+  await renderHome(true);
+}
+
+async function handleImageFile(file, inputEl) {
+  if (!file) return;
+  const inner       = document.querySelector(".image-upload-inner");
+  const loading     = document.getElementById("image-loading");
+  const loadingText = document.getElementById("image-loading-text");
+  inner.classList.add("hidden");
+  loading.classList.remove("hidden");
+  loadingText.textContent = "Reading recipe…";
 
   try {
     const base64 = await compressImage(file);
@@ -502,8 +547,8 @@ async function handleImageFile(file, inputEl) {
   }
 }
 
-document.getElementById("image-input").addEventListener("change", e => handleImageFile(e.target.files[0], e.target));
-document.getElementById("image-input-camera").addEventListener("change", e => handleImageFile(e.target.files[0], e.target));
+document.getElementById("image-input").addEventListener("change", e => handleImageFiles(e.target.files, e.target));
+document.getElementById("image-input-camera").addEventListener("change", e => handleImageFiles(e.target.files, e.target));
 
 function compressImage(file) {
   return new Promise((resolve, reject) => {

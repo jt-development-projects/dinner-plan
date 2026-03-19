@@ -152,7 +152,7 @@
     <h1 id="form-title">Add Recipe</h1>
 
     <div class="image-upload-area" id="image-upload-area">
-      <input type="file" id="image-input" accept="image/*" hidden>
+      <input type="file" id="image-input" accept="image/*" multiple hidden>
       <input type="file" id="image-input-camera" accept="image/*" capture="environment" hidden>
       <div class="image-upload-inner">
         <div class="upload-btns">
@@ -165,10 +165,10 @@
             <span class="upload-label">Upload image</span>
           </button>
         </div>
-        <span class="upload-sub">Scan a recipe to fill in automatically</span>
+        <span class="upload-sub">Scan a recipe — select multiple to bulk import</span>
       </div>
       <div class="image-loading hidden" id="image-loading">
-        <span class="spinner"></span> Reading recipe…
+        <span class="spinner"></span> <span id="image-loading-text">Reading recipe…</span>
       </div>
     </div>
 
