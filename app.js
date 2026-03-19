@@ -800,7 +800,11 @@ function fromBaseAmount(base, family) {
   return null;
 }
 
+let _shoppingRenderVersion = 0;
+
 async function renderShoppingList() {
+  const version = ++_shoppingRenderVersion;
+
   const people   = Math.max(1, parseInt(document.getElementById("home-people").value, 10) || 1);
   const selected = recipes.filter(r => checkedIds.has(r.id));
 
@@ -828,6 +832,8 @@ async function renderShoppingList() {
     canonical = await fetchIngredientGroupings(allNames);
     loadingEl.classList.add("hidden");
   }
+
+  if (version !== _shoppingRenderVersion) return; // superseded by a newer render
 
   // name → { displayName, families: Map<family, baseAmount>, hasNoAmount }
   const nameMap = new Map();
