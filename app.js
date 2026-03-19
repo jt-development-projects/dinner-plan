@@ -705,6 +705,45 @@ document.getElementById("btn-back-detail").addEventListener("click", () => {
 
 // ─── Shopping List (inline) ───────────────────────────────────────────────────
 
+// Unit conversion tables (to base unit)
+const TO_G   = { g: 1, kg: 1000 };
+const TO_ML  = { ml: 1, dl: 100, l: 1000 };
+const TO_TSP = { tsp: 1, tbsp: 3, cup: 48 };
+
+function unitFamily(u) {
+  if (!u) return "__none__";
+  if (u in TO_G)   return "weight";
+  if (u in TO_ML)  return "volume";
+  if (u in TO_TSP) return "spoon";
+  return u; // pcs, pinch, slices, bunch — each its own group
+}
+
+function toBaseAmount(amount, unit) {
+  if (unit in TO_G)   return amount * TO_G[unit];
+  if (unit in TO_ML)  return amount * TO_ML[unit];
+  if (unit in TO_TSP) return amount * TO_TSP[unit];
+  return amount;
+}
+
+function fromBaseAmount(base, family) {
+  if (family === "weight") {
+    return base >= 1000
+      ? { amount: base / 1000, unit: "kg" }
+      : { amount: base, unit: "g" };
+  }
+  if (family === "volume") {
+    if (base >= 1000) return { amount: base / 1000, unit: "l" };
+    if (base >= 100)  return { amount: base / 100,  unit: "dl" };
+    return { amount: base, unit: "ml" };
+  }
+  if (family === "spoon") {
+    if (base >= 48) return { amount: base / 48, unit: "cup" };
+    if (base >= 3)  return { amount: base / 3,  unit: "tbsp" };
+    return { amount: base, unit: "tsp" };
+  }
+  return null;
+}
+
 function renderShoppingList() {
   const people   = Math.max(1, parseInt(document.getElementById("home-people").value, 10) || 1);
   const selected = recipes.filter(r => checkedIds.has(r.id));
@@ -723,35 +762,46 @@ function renderShoppingList() {
   noShopping.classList.add("hidden");
   summary.textContent = `${selected.length} recipe${selected.length > 1 ? "s" : ""}`;
 
-  const map = new Map();
+  // name → { displayName, families: Map<family, baseAmount>, hasNoAmount }
+  const nameMap = new Map();
   selected.forEach(recipe => {
     const scale = people / recipe.serves;
     recipe.ingredients.forEach(ing => {
-      if (ing.amount == null) {
-        const key = ing.name.toLowerCase() + "||no-amount";
-        if (!map.has(key)) map.set(key, { name: ing.name, unit: "", amount: null });
-        return;
-      }
-      const key = ing.name.toLowerCase() + "||" + ing.unit.toLowerCase();
-      if (map.has(key)) {
-        map.get(key).amount += ing.amount * scale;
-      } else {
-        map.set(key, { name: ing.name, unit: ing.unit, amount: ing.amount * scale });
-      }
+      const key = ing.name.toLowerCase().trim();
+      if (!nameMap.has(key)) nameMap.set(key, { displayName: ing.name, families: new Map(), hasNoAmount: false });
+      const entry = nameMap.get(key);
+
+      if (ing.amount == null) { entry.hasNoAmount = true; return; }
+
+      const family = unitFamily(ing.unit);
+      const base   = toBaseAmount(ing.amount * scale, ing.unit);
+      entry.families.set(family, (entry.families.get(family) || 0) + base);
     });
   });
 
-  Array.from(map.entries())
-    .sort((a, b) => a[1].name.localeCompare(b[1].name))
-    .forEach(([key, item]) => {
-      const li        = document.createElement("li");
-      const unit      = item.unit ? ` ${item.unit}` : "";
-      const amountStr = item.amount != null ? `${formatAmount(item.amount)}${unit}` : "—";
-      const gotIt     = !!shoppingChecked[key];
+  Array.from(nameMap.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .forEach(([key, entry]) => {
+      const parts = [];
+      entry.families.forEach((base, family) => {
+        const converted = fromBaseAmount(base, family);
+        if (converted) {
+          parts.push(`${formatAmount(converted.amount)} ${converted.unit}`);
+        } else {
+          // pcs, pinch, slices, bunch, or no-unit
+          const unit = family === "__none__" ? "" : ` ${family}`;
+          parts.push(`${formatAmount(base)}${unit}`.trim());
+        }
+      });
+      if (entry.hasNoAmount && parts.length === 0) parts.push("—");
+
+      const amountStr = parts.join(" + ");
+      const li = document.createElement("li");
+      const gotIt = !!shoppingChecked[key];
 
       const cb = document.createElement("input");
-      cb.type  = "checkbox";
-      cb.title = "Mark as got";
+      cb.type    = "checkbox";
+      cb.title   = "Mark as got";
       cb.checked = gotIt;
 
       const amtSpan = document.createElement("span");
@@ -759,7 +809,7 @@ function renderShoppingList() {
       amtSpan.textContent = amountStr;
 
       const nameSpan = document.createElement("span");
-      nameSpan.textContent = item.name;
+      nameSpan.textContent = entry.displayName;
 
       li.appendChild(cb);
       li.appendChild(amtSpan);
