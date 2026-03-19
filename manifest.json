@@ -1,0 +1,17 @@
+{
+  "name": "Dinner Plan",
+  "short_name": "Dinner Plan",
+  "description": "Plan your dinners and build your shopping list",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f8f6",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "/dinner_plan_final_logo_no_line.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
