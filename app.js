@@ -502,16 +502,19 @@ async function handleImageFiles(files, inputEl) {
   for (let i = 0; i < files.length; i++) {
     loadingText.textContent = `Reading recipe ${i + 1} of ${files.length}…`;
     try {
-      const base64 = await compressImage(files[i]);
-      const res    = await fetch("/api/parse-image", {
+      const base64     = await compressImage(files[i]);
+      const controller = new AbortController();
+      const timeout    = setTimeout(() => controller.abort(), 30000);
+      const res        = await fetch("/api/parse-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ image: base64, mediaType: "image/jpeg" }),
+        signal: controller.signal,
       });
+      clearTimeout(timeout);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Unknown error");
       loadingText.textContent = `Saving recipe ${i + 1} of ${files.length}…`;
-      data.ingredients = await normaliseIngredients(data.ingredients || []);
       await apiSave(data);
       saved++;
     } catch {
@@ -899,11 +902,15 @@ async function normaliseIngredients(ingredients) {
   const newNames      = [...new Set(ingredients.map(i => i.name))];
   if (!existingNames.length) return ingredients;
   try {
+    const controller = new AbortController();
+    const timeout    = setTimeout(() => controller.abort(), 15000);
     const res = await fetch("/api/normalise-ingredients", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ newNames, existingNames }),
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
     const { mapping } = await res.json();
     return ingredients.map(ing => ({ ...ing, name: mapping[ing.name] ?? ing.name }));
   } catch {
