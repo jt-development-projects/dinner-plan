@@ -67,10 +67,9 @@ async function apiGet() {
   const { data, error } = await sb
     .from("recipes")
     .select("*")
-    .eq("group_id", currentGroupId)
-    .order("name");
+    .eq("group_id", currentGroupId);
   if (error) throw error;
-  return data;
+  return data.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
 }
 
 async function apiSave(recipe) {
