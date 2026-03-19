@@ -153,10 +153,19 @@
 
     <div class="image-upload-area" id="image-upload-area">
       <input type="file" id="image-input" accept="image/*" hidden>
-      <div class="image-upload-inner" id="image-upload-trigger">
-        <span class="upload-icon">📷</span>
-        <span class="upload-label">Upload a photo to fill in automatically</span>
-        <span class="upload-sub">JPG, PNG, screenshot — any recipe image</span>
+      <input type="file" id="image-input-camera" accept="image/*" capture="environment" hidden>
+      <div class="image-upload-inner">
+        <div class="upload-btns">
+          <button type="button" id="image-upload-trigger" class="upload-btn">
+            <span class="upload-icon">📷</span>
+            <span class="upload-label">Take photo</span>
+          </button>
+          <button type="button" id="image-gallery-trigger" class="upload-btn">
+            <span class="upload-icon">🖼</span>
+            <span class="upload-label">Upload image</span>
+          </button>
+        </div>
+        <span class="upload-sub">Scan a recipe to fill in automatically</span>
       </div>
       <div class="image-loading hidden" id="image-loading">
         <span class="spinner"></span> Reading recipe…

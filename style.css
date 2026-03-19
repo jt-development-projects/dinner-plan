@@ -389,13 +389,31 @@ nav button:hover { background: #ddd; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 20px;
-  cursor: pointer;
+  gap: 8px;
+  padding: 16px 20px;
 }
 
+.upload-btns {
+  display: flex;
+  gap: 12px;
+}
+
+.upload-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 20px;
+  background: none;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-family: inherit;
+  min-width: 110px;
+}
+.upload-btn:hover { border-color: #111; background: #f0efe9; }
+
 .upload-icon { font-size: 1.4rem; }
-.upload-label { font-weight: 700; font-size: .8rem; text-transform: uppercase; letter-spacing: 1px; }
+.upload-label { font-weight: 700; font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; }
 .upload-sub { color: var(--muted); font-size: .75rem; }
 
 .image-loading {

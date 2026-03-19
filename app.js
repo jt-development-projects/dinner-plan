@@ -469,24 +469,26 @@ function renumberSteps() {
 // ─── Image Upload ─────────────────────────────────────────────────────────────
 
 document.getElementById("image-upload-trigger").addEventListener("click", () => {
+  document.getElementById("image-input-camera").click();
+});
+
+document.getElementById("image-gallery-trigger").addEventListener("click", () => {
   document.getElementById("image-input").click();
 });
 
-document.getElementById("image-input").addEventListener("change", async e => {
-  const file = e.target.files[0];
+async function handleImageFile(file, inputEl) {
   if (!file) return;
-
-  const inner   = document.getElementById("image-upload-trigger");
+  const inner   = document.querySelector(".image-upload-inner");
   const loading = document.getElementById("image-loading");
   inner.classList.add("hidden");
   loading.classList.remove("hidden");
 
   try {
-    const base64 = await fileToBase64(file);
+    const base64 = await compressImage(file);
     const res    = await fetch("/api/parse-image", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ image: base64, mediaType: file.type }),
+      body: JSON.stringify({ image: base64, mediaType: "image/jpeg" }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Unknown error");
@@ -496,15 +498,34 @@ document.getElementById("image-input").addEventListener("change", async e => {
   } finally {
     loading.classList.add("hidden");
     inner.classList.remove("hidden");
-    e.target.value = "";
+    inputEl.value = "";
   }
-});
+}
 
-function fileToBase64(file) {
+document.getElementById("image-input").addEventListener("change", e => handleImageFile(e.target.files[0], e.target));
+document.getElementById("image-input-camera").addEventListener("change", e => handleImageFile(e.target.files[0], e.target));
+
+function compressImage(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload  = () => resolve(reader.result.split(",")[1]);
     reader.onerror = reject;
+    reader.onload = ev => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        const MAX = 1600;
+        let { width, height } = img;
+        if (width > MAX || height > MAX) {
+          if (width > height) { height = Math.round(height * MAX / width); width = MAX; }
+          else                { width  = Math.round(width  * MAX / height); height = MAX; }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width; canvas.height = height;
+        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", 0.82).split(",")[1]);
+      };
+      img.src = ev.target.result;
+    };
     reader.readAsDataURL(file);
   });
 }
