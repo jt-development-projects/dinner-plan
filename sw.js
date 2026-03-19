@@ -1,4 +1,4 @@
-const CACHE = "dinner-plan-v1";
+const CACHE = "madplan-v2";
 const PRECACHE = ["/", "/app.js", "/style.css", "/logo_header.svg"];
 
 self.addEventListener("install", e => {
