@@ -95,12 +95,17 @@ document.getElementById("form-login").addEventListener("submit", async e => {
   const email    = document.getElementById("login-email").value.trim();
   const password = document.getElementById("login-password").value;
   const errEl    = document.getElementById("login-error");
+  const btn      = e.target.querySelector("button[type='submit']");
   errEl.classList.add("hidden");
+  btn.textContent = "Signing in…";
+  btn.disabled = true;
 
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
   if (error) {
     errEl.textContent = error.message;
     errEl.classList.remove("hidden");
+    btn.textContent = "Sign in";
+    btn.disabled = false;
   } else {
     currentUser = data.user;
     document.getElementById("nav-user-name").textContent =
