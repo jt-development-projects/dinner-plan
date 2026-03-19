@@ -334,12 +334,10 @@ async function renderHome(refresh = false) {
   }
   empty.classList.add("hidden");
 
-  // When locked, float this week's recipes to the top
-  const thisWeek  = recipes.filter(r => checkedIds.has(r.id));
-  const theRest   = recipes.filter(r => !checkedIds.has(r.id));
-  const ordered   = shoppingLocked && thisWeek.length
-    ? [...thisWeek, ...theRest]
-    : recipes;
+  // Checked recipes always float to the top
+  const thisWeek = recipes.filter(r => checkedIds.has(r.id));
+  const theRest  = recipes.filter(r => !checkedIds.has(r.id));
+  const ordered  = thisWeek.length ? [...thisWeek, ...theRest] : recipes;
 
   if (shoppingLocked && thisWeek.length) {
     const label = document.createElement("div");
@@ -356,7 +354,7 @@ async function renderHome(refresh = false) {
 
     const checked = checkedIds.has(recipe.id);
 
-    // Add divider between this week's recipes and the rest
+    // Add divider between this week's recipes and the rest (only when locked)
     if (shoppingLocked && thisWeek.length && !checked && !dividerAdded) {
       const divider = document.createElement("div");
       divider.className = "recipe-section-label recipe-section-rest";
@@ -748,7 +746,7 @@ function applyLockState() {
   const people   = document.getElementById("home-people");
 
   homeView.classList.toggle("shopping-locked", shoppingLocked);
-  lockBtn.textContent = shoppingLocked ? "Unlock" : "Lock Dinner Plan";
+  lockBtn.textContent = shoppingLocked ? "🔓 Unlock Dinner Plan" : "🔒 Lock Dinner Plan";
 
   document.querySelectorAll(".card-checkbox").forEach(cb => {
     cb.disabled = shoppingLocked;

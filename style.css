@@ -685,6 +685,32 @@ nav button:hover { background: #ddd; }
 
 #no-shopping { margin: 20px 14px; text-align: left; }
 
+/* LOCK DINNER PLAN BUTTON */
+.btn-lock-plan {
+  display: block;
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 14px;
+  padding: 12px 18px;
+  background: #fff;
+  color: var(--text);
+  border: 2px solid #111;
+  font-family: inherit;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-align: center;
+}
+.btn-lock-plan:hover { background: #111; color: #fff; }
+
+.shopping-locked .btn-lock-plan {
+  background: #111;
+  color: #fff;
+}
+.shopping-locked .btn-lock-plan:hover { background: #333; }
+
 /* SHOPPING LOCK */
 .shopping-locked .home-left-actions,
 .shopping-locked .card-checkbox,
