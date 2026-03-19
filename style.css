@@ -271,6 +271,22 @@ nav button:hover { background: #ddd; }
 
 .hint { color: var(--muted); font-size: .78rem; margin-bottom: 14px; }
 
+.recipe-section-label {
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 8px 14px 4px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.recipe-section-rest {
+  margin-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
 .recipe-grid {
   display: flex;
   flex-direction: column;
@@ -669,9 +685,42 @@ nav button:hover { background: #ddd; }
 
 #no-shopping { margin: 20px 14px; text-align: left; }
 
+/* SHOPPING LOCK */
+.shopping-locked .home-left-actions,
+.shopping-locked .card-checkbox,
+.shopping-locked #home-people,
+.shopping-locked .hint {
+  opacity: .35;
+  pointer-events: none;
+}
+
+.shopping-locked .shopping-panel {
+  border-color: #111;
+}
+
+.shopping-locked .shopping-panel-header {
+  background: #111;
+  color: #fff;
+}
+
+.shopping-locked .shopping-panel-header h2 {
+  color: #fff;
+}
+
+.shopping-locked #btn-lock-shopping {
+  color: #fff;
+  border-color: #444;
+  opacity: 1;
+  pointer-events: auto;
+}
+
 @media (max-width: 860px) {
   .home-columns { grid-template-columns: 1fr; }
   .shopping-panel { position: static; }
+
+  /* On mobile, hide the recipe list entirely when locked */
+  .shopping-locked .home-left { display: none !important; }
+  .shopping-locked .shopping-panel { position: static; }
 }
 
 @media (max-width: 640px) {

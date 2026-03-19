@@ -12,27 +12,39 @@ let currentDetailId = null;
 let recipesLoaded = false;
 let checkedIds = new Set();
 let pendingInviteToken = null;
+let shoppingLocked = false;
+let shoppingChecked = {};  // key → true/false (got-it ticks)
 
 // ─── Plan (localStorage) ──────────────────────────────────────────────────────
 
 const PLAN_KEY = "dinner-plan";
 
-function loadPlan() {
+async function loadPlan() {
+  let saved = {};
   try {
-    const saved = JSON.parse(localStorage.getItem(PLAN_KEY) || "{}");
-    checkedIds = new Set(saved.checked || []);
-    const peopleInput = document.getElementById("home-people");
-    if (saved.people) peopleInput.value = saved.people;
+    const { data } = await sb.from("groups").select("plan").eq("id", currentGroupId).single();
+    saved = data?.plan || {};
   } catch {
-    checkedIds = new Set();
+    try { saved = JSON.parse(localStorage.getItem(PLAN_KEY) || "{}"); } catch {}
   }
+  checkedIds = new Set(saved.checked || []);
+  shoppingLocked = saved.locked || false;
+  shoppingChecked = saved.shoppingChecked || {};
+  const peopleInput = document.getElementById("home-people");
+  if (saved.people) peopleInput.value = saved.people;
 }
 
 function savePlan() {
-  localStorage.setItem(PLAN_KEY, JSON.stringify({
+  const plan = {
     checked: Array.from(checkedIds),
     people: document.getElementById("home-people").value,
-  }));
+    locked: shoppingLocked,
+    shoppingChecked,
+  };
+  localStorage.setItem(PLAN_KEY, JSON.stringify(plan));
+  if (currentGroupId) {
+    sb.from("groups").update({ plan }).eq("id", currentGroupId).then(() => {});
+  }
 }
 
 // ─── View Router ──────────────────────────────────────────────────────────────
@@ -317,22 +329,56 @@ async function renderHome(refresh = false) {
   if (recipes.length === 0) {
     empty.classList.remove("hidden");
     renderShoppingList();
+    applyLockState();
     return;
   }
   empty.classList.add("hidden");
 
-  recipes.forEach(recipe => {
+  // When locked, float this week's recipes to the top
+  const thisWeek  = recipes.filter(r => checkedIds.has(r.id));
+  const theRest   = recipes.filter(r => !checkedIds.has(r.id));
+  const ordered   = shoppingLocked && thisWeek.length
+    ? [...thisWeek, ...theRest]
+    : recipes;
+
+  if (shoppingLocked && thisWeek.length) {
+    const label = document.createElement("div");
+    label.className = "recipe-section-label";
+    label.textContent = "This week";
+    grid.appendChild(label);
+  }
+
+  let dividerAdded = false;
+  ordered.forEach(recipe => {
     const card = document.createElement("div");
     card.className = "recipe-card";
     card.dataset.id = recipe.id;
 
     const checked = checkedIds.has(recipe.id);
-    card.innerHTML = `
-      <input type="checkbox" class="card-checkbox" data-id="${recipe.id}" ${checked ? "checked" : ""}>
-      <div class="card-name">${escHtml(recipe.name)}</div>
-    `;
 
-    card.querySelector(".card-checkbox").addEventListener("change", e => {
+    // Add divider between this week's recipes and the rest
+    if (shoppingLocked && thisWeek.length && !checked && !dividerAdded) {
+      const divider = document.createElement("div");
+      divider.className = "recipe-section-label recipe-section-rest";
+      divider.textContent = "All recipes";
+      grid.appendChild(divider);
+      dividerAdded = true;
+    }
+
+    const cb = document.createElement("input");
+    cb.type      = "checkbox";
+    cb.className = "card-checkbox";
+    cb.dataset.id = recipe.id;
+    cb.checked   = checked;
+
+    const name = document.createElement("div");
+    name.className   = "card-name";
+    name.textContent = recipe.name;
+
+    card.appendChild(cb);
+    card.appendChild(name);
+
+    cb.addEventListener("change", e => {
       e.stopPropagation();
       if (e.target.checked) checkedIds.add(recipe.id);
       else checkedIds.delete(recipe.id);
@@ -349,6 +395,7 @@ async function renderHome(refresh = false) {
   });
 
   renderShoppingList();
+  applyLockState();
 }
 
 // ─── Add / Edit Recipe View ───────────────────────────────────────────────────
@@ -630,19 +677,35 @@ function renderShoppingList() {
     });
   });
 
-  Array.from(map.values())
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .forEach(item => {
-      const li      = document.createElement("li");
-      const unit    = item.unit ? ` ${item.unit}` : "";
+  Array.from(map.entries())
+    .sort((a, b) => a[1].name.localeCompare(b[1].name))
+    .forEach(([key, item]) => {
+      const li        = document.createElement("li");
+      const unit      = item.unit ? ` ${item.unit}` : "";
       const amountStr = item.amount != null ? `${formatAmount(item.amount)}${unit}` : "—";
-      li.innerHTML = `
-        <input type="checkbox" title="Mark as got">
-        <span class="shopping-amount">${escHtml(amountStr)}</span>
-        <span>${escHtml(item.name)}</span>
-      `;
-      li.querySelector("input").addEventListener("change", e => {
+      const gotIt     = !!shoppingChecked[key];
+
+      const cb = document.createElement("input");
+      cb.type  = "checkbox";
+      cb.title = "Mark as got";
+      cb.checked = gotIt;
+
+      const amtSpan = document.createElement("span");
+      amtSpan.className   = "shopping-amount";
+      amtSpan.textContent = amountStr;
+
+      const nameSpan = document.createElement("span");
+      nameSpan.textContent = item.name;
+
+      li.appendChild(cb);
+      li.appendChild(amtSpan);
+      li.appendChild(nameSpan);
+      if (gotIt) li.classList.add("checked");
+
+      cb.addEventListener("change", e => {
         li.classList.toggle("checked", e.target.checked);
+        shoppingChecked[key] = e.target.checked;
+        savePlan();
       });
       itemsList.appendChild(li);
     });
@@ -669,6 +732,29 @@ document.getElementById("btn-copy-shopping").addEventListener("click", () => {
 });
 
 document.getElementById("btn-print-shopping").addEventListener("click", () => window.print());
+
+document.getElementById("btn-lock-shopping").addEventListener("click", () => {
+  shoppingLocked = !shoppingLocked;
+  // When unlocking, clear the got-it ticks so the list is fresh next time
+  if (!shoppingLocked) shoppingChecked = {};
+  savePlan();
+  applyLockState();
+  if (!shoppingLocked) renderShoppingList();
+});
+
+function applyLockState() {
+  const homeView = document.getElementById("view-home");
+  const lockBtn  = document.getElementById("btn-lock-shopping");
+  const people   = document.getElementById("home-people");
+
+  homeView.classList.toggle("shopping-locked", shoppingLocked);
+  lockBtn.textContent = shoppingLocked ? "Unlock" : "Lock Dinner Plan";
+
+  document.querySelectorAll(".card-checkbox").forEach(cb => {
+    cb.disabled = shoppingLocked;
+  });
+  people.disabled = shoppingLocked;
+}
 
 // ─── Export ───────────────────────────────────────────────────────────────────
 
@@ -748,7 +834,7 @@ async function loadUserGroup() {
   }
 
   pendingInviteToken = null;
-  loadPlan();
+  await loadPlan();
   await renderHome(true);
 }
 
