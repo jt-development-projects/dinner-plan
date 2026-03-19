@@ -231,18 +231,14 @@ document.getElementById("form-login").addEventListener("submit", async e => {
   btn.textContent = t("signingIn");
   btn.disabled = true;
 
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  const { error } = await sb.auth.signInWithPassword({ email, password });
   if (error) {
     errEl.textContent = error.message;
     errEl.classList.remove("hidden");
     btn.textContent = t("signIn");
     btn.disabled = false;
-  } else {
-    currentUser = data.user;
-    document.getElementById("nav-user-name").textContent =
-      data.user.user_metadata?.display_name || data.user.email;
-    await loadUserGroup();
   }
+  // Success is handled by onAuthStateChange SIGNED_IN
 });
 
 document.getElementById("form-register").addEventListener("submit", async e => {
@@ -326,9 +322,8 @@ document.getElementById("form-reset").addEventListener("submit", async e => {
     errEl.classList.remove("hidden");
     btn.textContent = t("setNewPassword");
     btn.disabled = false;
-  } else {
-    await loadUserGroup();
   }
+  // Success is handled by onAuthStateChange SIGNED_IN
 });
 
 document.getElementById("link-to-register").addEventListener("click", e => { e.preventDefault(); showView("auth-register"); });
@@ -338,11 +333,7 @@ document.getElementById("link-to-login-from-forgot").addEventListener("click", e
 
 document.getElementById("btn-signout").addEventListener("click", async () => {
   await sb.auth.signOut();
-  recipes = [];
-  recipesLoaded = false;
-  currentGroupId = null;
-  currentUser = null;
-  showView("auth-login");
+  // State reset and view change handled by onAuthStateChange SIGNED_OUT
 });
 
 // ─── Group auto-create / invite join ─────────────────────────────────────────
@@ -711,9 +702,11 @@ function fillFormFromRecipe(recipe) {
   if (recipe.serves)    document.getElementById("field-serves").value = recipe.serves;
   if (recipe.cook_time) document.getElementById("field-cook-time").value = recipe.cook_time;
 
-  document.getElementById("ingredients-list").innerHTML = "";
-  (recipe.ingredients || []).forEach(ing => addIngredientRow(ing));
-  if (!recipe.ingredients?.length) addIngredientRow();
+  const ingredientsList = document.getElementById("ingredients-list");
+  ingredientsList.innerHTML = "";
+  const validIngredients = (recipe.ingredients || []).filter(ing => ing.name?.trim());
+  validIngredients.forEach(ing => addIngredientRow(ing));
+  if (!validIngredients.length) addIngredientRow();
 
   document.getElementById("steps-list").innerHTML = "";
   (recipe.steps || []).forEach(step => addStepRow(step));
@@ -764,7 +757,7 @@ document.getElementById("recipe-form").addEventListener("submit", async e => {
   try {
     await apiSave(recipe);
   } catch (err) {
-    showError(t("saveError"));
+    showError(t("saveError") + "\n\n" + (err?.message || String(err)));
     saveBtn.textContent = t("saveRecipe");
     saveBtn.disabled = false;
     return;
@@ -1201,11 +1194,17 @@ async function initApp() {
   sb.auth.onAuthStateChange(async (event, session) => {
     if (event === "PASSWORD_RECOVERY") {
       showView("auth-reset");
-    } else if (event === "SIGNED_IN" && session) {
+    } else if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session && !currentUser) {
       currentUser = session.user;
       document.getElementById("nav-user-name").textContent =
         session.user.user_metadata?.display_name || session.user.email;
       await loadUserGroup();
+    } else if (event === "SIGNED_OUT") {
+      recipes = [];
+      recipesLoaded = false;
+      currentGroupId = null;
+      currentUser = null;
+      showView("auth-login");
     }
   });
 

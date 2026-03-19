@@ -26,7 +26,7 @@ Rules:
 - cook_time is total cook time in minutes as a number — add prep + cook time if both shown. Omit the field (do not include it) if not mentioned
 - amount must be a number (default to 1 if unclear)
 - unit must be one of exactly: g, kg, ml, dl, l, tsp, tbsp, cup, pcs, pinch, slices, bunch — or empty string if none. Always normalise to these abbreviations regardless of the language in the image (e.g. spsk → tbsp, stk → pcs, knivspids → pinch, dl is already canonical, dåse/dose/boks → pcs)
-- ingredient names: keep them in the SAME language as the recipe image. Do NOT translate. If the recipe is in Danish, ingredient names must stay in Danish.
+- ingredient names: keep them in the SAME language as the recipe image. Do NOT translate. If the recipe is in Danish, ingredient names must stay in Danish. The name must be ONLY the ingredient itself — strip any preparation notes like "finthakkede", "hakket", "skåret i tern", "diced", "chopped", etc.
 - steps should be plain text sentences in the same language as the recipe
 - Return ONLY the JSON, no markdown, no explanation`;
 
