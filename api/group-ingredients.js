@@ -7,23 +7,24 @@ export default async function handler(req, res) {
   const { names } = req.body;
   if (!names?.length) return res.status(200).json({ canonical: {} });
 
-  const prompt = `You are grouping ingredient names from recipes written in Danish and English.
+  const prompt = `You are grouping ingredient names from a shopping list. Recipes may be in Danish, English, or mixed.
 
-Some names refer to the same ingredient but differ in language, spelling, capitalisation, or minor wording.
-
-Ingredient names:
+Ingredient names to group:
 ${names.map(n => `- ${n}`).join('\n')}
 
-For every name, return the single best canonical English name. Names that clearly refer to the same ingredient must map to the same canonical name. Preserve specificity — "cherry tomatoes" and "tomatoes" are different ingredients.
+Task: for each name, decide which single name from the list best represents that ingredient. Names that refer to the same ingredient must all map to the same representative name. The representative name MUST be one of the names from the list above — do not invent new names or translate.
 
-Return ONLY a JSON object mapping each original name to its canonical name:
-{"original name": "canonical name"}
+Rules:
+- Pick the most specific/descriptive name as the canonical one when merging
+- Merge across languages: "oksebouillon", "Beef bouillon", "Beef broth", "Beef stock", "oksefond" → pick whichever appears in the list
+- Merge across specificity when clearly the same thing: "hakkede dåsetomater", "Canned chopped tomatoes", "canned tomatoes", "dåsetomater" → pick the most specific one from the list
+- "dose", "dåse", "boks", "can", "tin" all mean the same container unit — treat as equivalent
+- Merge spelling variants and capitalisation differences
+- Keep things separate when genuinely different: "cherry tomater" ≠ "tomater", "fløde" ≠ "mælk"
+- If a name has no match, map it to itself
 
-Mapping guidance (Danish → English):
-- løg = onion, hvidløg = garlic, smør = butter, mel = flour, æg = egg
-- mælk = milk, fløde = cream, sukker = sugar, salt = salt, peber = pepper
-- olie = oil, olivenolie = olive oil, persille = parsley, tomat/tomater = tomato
-- "salt og peber" / "salt and pepper" / "salt and fresh ground pepper" / "salt og friskkværnet peber" → "salt and pepper"`;
+Return ONLY a valid JSON object:
+{"original name": "chosen name from list", ...}`;
 
   try {
     const controller = new AbortController();
