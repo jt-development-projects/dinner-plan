@@ -1194,7 +1194,14 @@ async function initApp() {
   sb.auth.onAuthStateChange(async (event, session) => {
     if (event === "PASSWORD_RECOVERY") {
       showView("auth-reset");
-    } else if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session && !currentUser) {
+    } else if (event === "SIGNED_IN" && session) {
+      // Always handle explicit logins, even if currentUser is already set from a stale session
+      currentUser = session.user;
+      document.getElementById("nav-user-name").textContent =
+        session.user.user_metadata?.display_name || session.user.email;
+      await loadUserGroup();
+    } else if (event === "TOKEN_REFRESHED" && session && !currentUser) {
+      // Background token refresh at startup — only act if getSession() hasn't handled it yet
       currentUser = session.user;
       document.getElementById("nav-user-name").textContent =
         session.user.user_metadata?.display_name || session.user.email;
@@ -1209,12 +1216,13 @@ async function initApp() {
   });
 
   const { data: { session } } = await sb.auth.getSession();
-  if (session) {
+  if (session && !currentUser) {
+    // Only handle if onAuthStateChange(TOKEN_REFRESHED) hasn't already set currentUser
     currentUser = session.user;
     document.getElementById("nav-user-name").textContent =
       session.user.user_metadata?.display_name || session.user.email;
     await loadUserGroup();
-  } else {
+  } else if (!session && !currentUser) {
     showView(pendingInviteToken ? "auth-register" : "auth-login");
   }
 }
